@@ -1,5 +1,6 @@
 *.py[cod]
 *.out
+*.pickle
 
 # Serialized File
 *.serialized
