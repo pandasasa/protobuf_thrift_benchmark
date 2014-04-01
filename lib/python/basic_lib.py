@@ -37,6 +37,7 @@ class Scenario(object):
     '''
 
     _tool = None
+    _repeat_time = 100
 
     def __init__(self, tool, data_info_dict):
         '''
@@ -59,7 +60,7 @@ class Scenario(object):
         '''
 
         final_time = -1
-        for i in xrange(10):
+        for i in xrange(self._repeat_time):
             if self._tool == 'protobuf':
                 se_time = self.se_protobuf()
             elif self._tool == 'thrift':
@@ -89,7 +90,7 @@ class Scenario(object):
         '''
 
         final_time = -1
-        for i in xrange(10):
+        for i in xrange(self._repeat_time):
             if self._tool == 'protobuf':
                 de_time = self.de_protobuf()
             elif self._tool == 'thrift':
@@ -123,19 +124,19 @@ class Scenario(object):
         start_time = time.clock()
         
         for person in self._data_dic['input_data']['person']:
-            se_dict.setdefault('person', dict())
-            se_dict['person'].setdefault('name', person['name'])
-            se_dict['person'].setdefault('id', person['id'])
+            se_dict['person'] = dict()
+            se_dict['person']['name'] = person['name']
+            se_dict['person']['id'] = person['id']
             if person['email'] != '':
-                se_dict['person'].setdefault('email', person['email'])
-            se_dict['person'].setdefault('phone', list())
+                se_dict['person']['email'] = person['email']
+            se_dict['person']['phone'] = list()
             for phone in person['phone']:
                 tmp_dict = dict()
-                tmp_dict.setdefault('number', phone['number'])
+                tmp_dict['number'] = phone['number']
                 if phone['type'] == '':
-                    tmp_dict.setdefault('type', 'HOME')
+                    tmp_dict['type'] = 'HOME'
                 else:
-                    tmp_dict.setdefault('type', phone['type'])
+                    tmp_dict['type'] = phone['type']
 
                 se_dict['person']['phone'].append(tmp_dict)
 
