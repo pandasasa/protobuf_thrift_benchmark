@@ -16,8 +16,9 @@ class DataGenerator:
     _temp_dict = None
     _data_box = None
 
-    _x_loop = 100
-    _y_loop = 10
+    _x_init = 1
+    _x_loop = 1000
+    _y_loop = 1
     _z_loop = 1
 
     def __init__(self, temp_path):
@@ -48,8 +49,8 @@ class DataGenerator:
         def ext_dict(dic, length):
             for key in dic.keys():
                 if type(dic[key]) is unicode:
-                    dic[key] = ''.join(str_gen(length + 1)) if dic[key] == '' \
-                            else dic[key]
+                    dic[key] = ''.join(str_gen(self._x_init + length + 1)) \
+                            if dic[key] == '' else dic[key]
                 elif type(dic[key]) is list:
                     for item in dic[key]:
                         ext_dict(item, length)

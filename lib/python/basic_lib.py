@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import time
-
+import copy
 import json
 
 # This file is used to set some global vaiables such as the dictionary keys.
@@ -20,6 +20,16 @@ se_data_key_list = ['input_file_path', 'input_data', 'se_time', \
 
 # The dictionary's pickle file path.
 result_file_path = './result/python/original_dict.pickle'
+
+# The list of languages
+lang_list = ['python', 'java', 'cpp']
+
+# The serialized file output path.
+seed_file_path = './output/'
+
+# The filename postfix of the files to be remove.
+rm_postfix_list = ['.pyc', '.pyo', '.pyd', '.serialized']
+
 
 class Scenario(object):
     '''
@@ -48,13 +58,23 @@ class Scenario(object):
         None
         '''
 
+        final_time = -1
+        for i in xrange(10):
+            if self._tool == 'protobuf':
+                se_time = self.se_protobuf()
+            elif self._tool == 'thrift':
+                se_time = self.se_thrift()
+            else:
+                se_time = self.se_json()
 
-        if self._tool == 'protobuf':
-            self.se_protobuf()
-        elif self._tool == 'thrift':
-            self.se_thrift()
-        else:
-            self.se_json()
+            if final_time == -1:
+                final_time = se_time
+            elif final_time > se_time:
+                final_time = se_time
+            else:
+                continue
+
+        self._data_dic['se_time'] = final_time
 
 
     def deserialization(self):
@@ -68,12 +88,23 @@ class Scenario(object):
         None
         '''
 
-        if self._tool == 'protobuf':
-            self.de_protobuf()
-        elif self._tool == 'thrift':
-            self.de_thrift()
-        else:
-            self.de_json()
+        final_time = -1
+        for i in xrange(10):
+            if self._tool == 'protobuf':
+                de_time = self.de_protobuf()
+            elif self._tool == 'thrift':
+                de_time = self.de_thrift()
+            else:
+                de_time = self.de_json()
+
+            if final_time == -1:
+                final_time = de_time
+            elif final_time > de_time:
+                final_time = de_time
+            else:
+                continue
+
+        self._data_dic['dese_time'] = final_time
 
 
     def se_protobuf(self):
@@ -87,11 +118,34 @@ class Scenario(object):
         Serialization using JSON.
         '''
 
+        se_dict = dict()
+
         start_time = time.clock()
+        
+        for person in self._data_dic['input_data']['person']:
+            se_dict.setdefault('person', dict())
+            se_dict['person'].setdefault('name', person['name'])
+            se_dict['person'].setdefault('id', person['id'])
+            if person['email'] != '':
+                se_dict['person'].setdefault('email', person['email'])
+            se_dict['person'].setdefault('phone', list())
+            for phone in person['phone']:
+                tmp_dict = dict()
+                tmp_dict.setdefault('number', phone['number'])
+                if phone['type'] == '':
+                    tmp_dict.setdefault('type', 'HOME')
+                else:
+                    tmp_dict.setdefault('type', phone['type'])
+
+                se_dict['person']['phone'].append(tmp_dict)
+
         json_obj = json.dumps(self._data_dic['input_data'])
+
         end_time = time.clock()
-        self._data_dic['se_time'] = end_time - start_time
+
         self._data_dic['seed_file_str'] = json_obj
+
+        return end_time - start_time
 
 
     def de_protobuf(self):
@@ -108,5 +162,6 @@ class Scenario(object):
         start_time = time.clock()
         json.loads(self._data_dic['seed_file_str'])
         end_time = time.clock()
-        self._data_dic['dese_time'] = end_time - start_time
+
+        return end_time - start_time
 

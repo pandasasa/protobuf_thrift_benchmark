@@ -68,7 +68,9 @@ def test_go(data_dict):
     '''
 
     for tool in data_dict.keys():
+        print 'Tool: ' + tool
         for file_name in data_dict[tool].keys():
+            print 'Input File: ' + file_name
             data_info = data_dict[tool][file_name]
 
             ins = address_book.AddressBook(tool, data_info)
@@ -85,7 +87,10 @@ def test_go(data_dict):
 
             ins.deserialization()
 
-            del ins
+            # Clear the original string and serialized string
+            # for reducing the size of pickle file.
+            del data_dict[tool][file_name]['input_data']
+            del data_dict[tool][file_name]['seed_file_str']
 
 
 def result_dict_output(result_file_path, result_dict):
@@ -106,13 +111,34 @@ def result_dict_output(result_file_path, result_dict):
     pickle.dump(result_dict, result_file)
     result_file.close()
 
+
+def clean_workspace():
+    '''
+    Clean the workspace before running benchmark.
+    '''
+
+    def walk_func(arg, dirname, fnames):
+        for name in fnames:
+            for rm in basic_lib.rm_postfix_list:
+                if name[-len(rm):] == rm:
+                    os.remove(os.path.join(dirname, name))
+
+    os.path.walk('./', walk_func, None)
+
 if __name__ == '__main__':
+    # Cleaning workspace
+    print 'Cleaning Workspace'
+    clean_workspace()
+
     # Initializing information dictionary by data in path data_dir
     benchmark_dict = dict()
+    print 'Init. Data'
     init_data(basic_lib.input_data_dir, benchmark_dict)
 
     # Running Benchmark
+    print 'Running Benchmark'
     test_go(benchmark_dict)
 
     # Processing the result and generating statistic results
+    print 'Saving Result to Pickle.'
     result_dict_output(basic_lib.result_file_path, benchmark_dict)

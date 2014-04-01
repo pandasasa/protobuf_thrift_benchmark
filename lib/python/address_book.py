@@ -54,8 +54,9 @@ class AddressBook(basic_lib.Scenario):
 
         end_time = time.clock()
 
-        self._data_dic['se_time'] = end_time - start_time
         self._data_dic['seed_file_str'] = address_book.SerializeToString()
+
+        return end_time - start_time
 
 
     def se_thrift(self):
@@ -96,8 +97,9 @@ class AddressBook(basic_lib.Scenario):
 
         end_time = time.clock()
 
-        self._data_dic['se_time'] = end_time - start_time
         self._data_dic['seed_file_str'] = mem_buf.getvalue()
+
+        return end_time - start_time
 
 
     def de_protobuf(self):
@@ -112,8 +114,7 @@ class AddressBook(basic_lib.Scenario):
         address_book.ParseFromString(self._data_dic['seed_file_str'])
         end_time = time.clock()
 
-        self._data_dic['dese_time'] = end_time - start_time
-
+        return end_time - start_time
 
 
     def de_thrift(self):
@@ -131,5 +132,5 @@ class AddressBook(basic_lib.Scenario):
 
         end_time = time.clock()
 
-        self._data_dic['dese_time'] = end_time - start_time
+        return end_time - start_time
 

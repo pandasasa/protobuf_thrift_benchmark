@@ -2,6 +2,7 @@
 *.out
 *.pickle
 *.swp
+data/*.json
 
 # Serialized File
 *.serialized
