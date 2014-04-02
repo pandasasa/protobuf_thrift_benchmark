@@ -130,16 +130,14 @@ class DataGenerator:
         And output data box to file.
         '''
         
-        print 'Generating single value.'
+        print 'Generating single value'
         self.x_gen()
 
-        print 'Generating repeat value.'
+        print 'Generating repeat value'
         self.y_gen()
-
-        print 'Generating new keys.'
         self.z_gen()
 
-        print 'Output to file.'
+        print 'Output to file'
         for z in xrange(self._z_loop):
             for y in xrange(self._y_loop):
                 for x in xrange(self._x_loop):

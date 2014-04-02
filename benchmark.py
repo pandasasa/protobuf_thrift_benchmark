@@ -72,20 +72,20 @@ def test_go(data_dict):
             ins.serialization()
 
             output_path = './output/python/' + tool + '/' \
-                    + '.'.join(file_name.split('.')[:-1]) + '.serialized'
+                    + file_name[:-5] + '.serialized'
             output_file = open(output_path, 'w')
             output_file.write(data_info['seed_file_str'])
             output_file.close()
 
             data_info['seed_file_path'] = output_path
-            data_info['seed_file_size'] = os.path.getsize(output_path)
+            data_info['seed_file_size'] = len(data_info['seed_file_str'])
 
             ins.deserialization()
 
             # Clear the original string and serialized string
             # for reducing the size of pickle file.
-            del data_dict[tool][file_name]['input_data']
-            del data_dict[tool][file_name]['seed_file_str']
+            del data_info['input_data']
+            del data_info['seed_file_str']
 
 
 def result_dict_output(result_file_path, result_dict):

@@ -57,6 +57,8 @@ class Scenario(object):
         '''
 
         final_time = -1
+        se_time = 0
+
         for i in xrange(self._repeat_time):
             if self._tool == 'protobuf':
                 se_time = self.se_protobuf()
@@ -65,9 +67,7 @@ class Scenario(object):
             else:
                 se_time = self.se_json()
 
-            if final_time == -1:
-                final_time = se_time
-            elif final_time > se_time:
+            if final_time == -1 or final_time > se_time:
                 final_time = se_time
             else:
                 continue
@@ -87,6 +87,8 @@ class Scenario(object):
         '''
 
         final_time = -1
+        de_time = 0
+
         for i in xrange(self._repeat_time):
             if self._tool == 'protobuf':
                 de_time = self.de_protobuf()
@@ -95,9 +97,7 @@ class Scenario(object):
             else:
                 de_time = self.de_json()
 
-            if final_time == -1:
-                final_time = de_time
-            elif final_time > de_time:
+            if final_time == -1 or final_time > de_time:
                 final_time = de_time
             else:
                 continue

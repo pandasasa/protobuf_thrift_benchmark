@@ -6,7 +6,7 @@ import time
 
 import basic_lib
 
-import address_book_pb2
+import address_book_protobuf_pb2
 from AddressBook import ttypes
 from thrift.transport import TTransport
 from thrift.protocol import TCompactProtocol
@@ -30,7 +30,7 @@ class AddressBook(basic_lib.Scenario):
         Serialization using protobuf.
         '''
 
-        address_book = address_book_pb2.AddressBook()
+        address_book = address_book_protobuf_pb2.AddressBook()
 
         start_time = time.clock()
 
@@ -44,13 +44,13 @@ class AddressBook(basic_lib.Scenario):
                 one_phone = one_person.phone.add()
                 one_phone.number = phone['number']
                 if phone['type'] == '' or phone['type'] == 'HOME':
-                    one_phone.type = address_book_pb2.Person.HOME
+                    one_phone.type = address_book_protobuf_pb2.Person.HOME
                 elif phone['type'] == 'MOBILE':
-                    one_phone.type = address_book_pb2.Person.MOBILE
+                    one_phone.type = address_book_protobuf_pb2.Person.MOBILE
                 elif phone['type'] == 'WORK':
-                    one_phone.type = address_book_pb2.Person.WORK
+                    one_phone.type = address_book_protobuf_pb2.Person.WORK
                 else:
-                    one_phone.type = address_book_pb2.Person.OTHER
+                    one_phone.type = address_book_protobuf_pb2.Person.OTHER
 
         end_time = time.clock()
 
@@ -107,7 +107,7 @@ class AddressBook(basic_lib.Scenario):
         Deserialization using protobuf.
         '''
 
-        address_book = address_book_pb2.AddressBook()
+        address_book = address_book_protobuf_pb2.AddressBook()
 
         start_time = time.clock()
 

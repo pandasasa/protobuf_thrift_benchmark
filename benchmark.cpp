@@ -9,6 +9,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/filesystem.hpp>
 
+#include "lib/cpp/address_book.hpp"
 #include "lib/cpp/basic_lib.hpp"
 
 
@@ -79,9 +80,42 @@ void init_data(const string &data_dir, BenchmarkDict &benchmark_dict)
 }
 
 
-void test_go()
+void test_go(const Benchmark::BenchmarkDict &data_dict)
 {
+    for (Benchmark::BenchmarkDict::iterator tool_iter = data_dict.begin();
+        tool_iter != data_dict.end();
+        ++tool_iter)
+    {
+        cout << "Tool: " << *tool_iter << endl;
+
+        Benchmark::FileLevel &file_level = data_dict[*tool_iter];
+
+        for (Benchmark::FileLevel::iterator file_iter = file_level.begin();
+            file_iter != file_level.end();
+            ++file_iter)
+        {
+            Benchmark::KeyLevel &data_info = file_level[*file_iter];
+
+            Benchmark::AddressBook ins(*tool_iter, data_info);
+            ins.serialization();
+
+            string output_path = "./output/cpp/" + *iter_tool + "/"
+                + *file_iter.substr(0, *file_iter.length() - 5) + ".serialized";
+
+            ofstream output_file(output_path.c_str());
+            output_file.close();
+
+            data_info["seed_file_path"] = output_path;
+            data_info["seed_file_size"] = data_info["seed_file_str"].length();
+
+            ins.deserialization();
+
+            data_info["input_data"] = NULL;
+            data_info["seed_file_str"] = NULL;
+        }
+    }
 }
+
 
 void result_dict_output(const string &result_file_path,
         const Benchmark::BenchmarkDict &result_dict)
@@ -115,3 +149,4 @@ int main(int argc, char *argv[])
 
     exit(0);
 }
+

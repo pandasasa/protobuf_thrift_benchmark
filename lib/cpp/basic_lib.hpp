@@ -78,7 +78,68 @@ namespace Benchmark {
     class Scenario
     {
     public:
+        Scenario(const string &tool, const KeyLevel &data_info_dict)
+            : tool(tool), data_dic(data_info_dict) {}
+
+        void serialization() 
+        {
+            double final_time = -1;
+            double se_time = 0;
+
+            for (int i = 0; i < this->REPEAT_TIME; i++)
+            {
+                if (this->tool == "protobuf")
+                    se_time = this->se_protobuf();
+                else if (this->tool == "thrift")
+                    se_time = this->se_thrift();
+                else
+                    se_time = this->se_json();
+
+                if (final_time == -1 || final_time > se_time)
+                    final_time = se_time;
+                else
+                    continue;
+            }
+
+            this->data_dic["se_time"] = final_time;
+        }
+
+        void deserialization()
+        {
+            double final_time = -1;
+            double de_time = 0;
+
+            for (int i = 0; i < this->REPEAT_TIME; i++)
+            {
+                if (this->tool == "protobuf")
+                    de_time = this->de_protobuf();
+                else if (this->tool == "thrift")
+                    de_time = this->de_thrift();
+                else
+                    de_time = this->de_json();
+
+                if (final_time == -1 || final_time > de_time)
+                    final_time = de_time;
+                else
+                    continue;
+            }
+
+            this->data_dic["dese_time"] = final_time;
+        }
+
+        virtual double se_protobuf() = 0;
+        virtual double se_thrift() = 0;
+        virtual double de_protobuf() = 0;
+        virtual double de_thrift() = 0;
+        virtual double se_json() = 0;
+        virtual double de_json() = 0;
+
+    protected:
+        string tool;
+        KeyLevel &data_dic;
+
     private:
+        const int REPEAT_TIME = 100;
     };
 
 }
