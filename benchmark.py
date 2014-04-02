@@ -9,7 +9,6 @@ import json
 import pickle
 
 from lib.python import *
-from data import data_generator
 
 
 def init_data(data_dir, benchmark_dict):
@@ -25,17 +24,16 @@ def init_data(data_dir, benchmark_dict):
     The initialized dictionary itself.
     '''
 
+    file_list = filter(lambda x : not os.path.isdir(x), \
+        os.listdir(data_dir))
+    file_list = filter(lambda x : x[-5:] == '.json', file_list)
+
+    if len(file_list) == 0:
+        sys.stderr.write('Testing Data MISSED in dir ' + data_dir)
+        exit(1)
+
     for tool in basic_lib.se_tool_list:
         benchmark_dict[tool] = dict()
-
-        file_list = filter(lambda x : not os.path.isdir(x), \
-            os.listdir(data_dir))
-        file_list = filter(lambda x : x[-5:] == '.json', file_list)
-
-        if len(file_list) == 0:
-            sys.stderr.write('Testing Data MISSED in dir ' + data_dir)
-            exit(1)
-
         for file_name in file_list:
             benchmark_dict[tool][file_name] = dict()
 
@@ -48,12 +46,10 @@ def init_data(data_dir, benchmark_dict):
                     json_str = data.read()
                     data.close()
 
-                    data_obj = json.loads(json_str)
-                    data_file_info_dict[data_key] = data_obj
+                    data_file_info_dict[data_key] = json.loads(json_str)
                 else:
                     data_file_info_dict[data_key] = None
 
-    return benchmark_dict
 
 def test_go(data_dict):
     '''
@@ -111,64 +107,10 @@ def result_dict_output(result_file_path, result_dict):
     result_file.close()
 
 
-def clean_workspace():
-    '''
-    Clean the workspace before running benchmark.
-    '''
-
-    def walk_func(arg, dirname, fnames):
-        for name in fnames:
-            for rm in basic_lib.rm_postfix_list:
-                if name[-len(rm):] == rm:
-                    os.remove(os.path.join(dirname, name))
-
-    os.path.walk('./', walk_func, None)
-
-
-def data_generating(template_path, output_path, config_dict):
-    '''
-    Generating Test Data.
-    '''
-
-    data_generator.del_org('./data/', '.json')
-    gen = data_generator.DataGenerator(template_path, output_path, config_dict)
-    gen.gen()
-
-
-def parse_config(file_obj):
-    '''
-    Parsing the config file.
-    '''
-
-    result = {}
-
-    for line in file_obj:
-        key_value = line.split('=')
-        result[key_value[0]] = int(key_value[1])
-
-    return result
-
-
 if __name__ == '__main__':
-    # Cleaning workspace
-    print 'Cleaning Workspace'
-    clean_workspace()
-
-    # Testing Data Generating
-    print 'Generating Test Data'
-    template_path = './lib/template/address_book.json'
-    output_path = './data/'
-
-    config_file = open('./gen.config', 'r')
-    parsing_result = parse_config(config_file)
-    config_file.close()
-
-    data_generating(template_path, output_path, parsing_result)
-
-
     # Initializing information dictionary by data in path data_dir
-    benchmark_dict = dict()
     print 'Init. Data'
+    benchmark_dict = dict()
     init_data(basic_lib.input_data_dir, benchmark_dict)
 
     # Running Benchmark
@@ -178,4 +120,3 @@ if __name__ == '__main__':
     # Processing the result and generating statistic results
     print 'Saving Result to Pickle.'
     result_dict_output(basic_lib.result_file_path, benchmark_dict)
-

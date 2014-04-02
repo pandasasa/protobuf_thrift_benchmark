@@ -3,13 +3,10 @@
 #include <fstream>
 
 #include <string>
-#include <map>
 #include <list>
 
-#include <boost/algorithm/string.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-
 #include <boost/filesystem.hpp>
 
 #include "lib/cpp/basic_lib.hpp"
@@ -20,15 +17,64 @@ using namespace std;
 
 void init_data(const string &data_dir, BenchmarkDict &benchmark_dict)
 {
-    BasicData bd;
+    Benchmark::BasicData bd;
     namespace bf = boost::filesystem;
 
-    list<string>::iterator tool_iter = bd.get_tool_list().begin();
+    vector<string> data_file_list;
 
-    while (tool_iter != bd.get_tool_list().end())
+    bf::path input_data_path(data_dir.c_str());
+    bf::directory_iterator end_iter;
+    for (bf::directory_iterator iter(path); iter != end_iter; ++iter)
     {
-        bf::path input_data_path(data_dir.c_str());
-        tool_iter++;
+        if (bf::is_regular_file(iter->status))
+        {
+            file_path = string(iter->path().string());
+            string ext = file_path.substr(file_path.length() - 5, 5);
+
+            if (ext == ".json")
+                data_file_list.push_back(iter->path().string());
+        }
+    }
+
+    for (list<string>::iterator tool_iter = bd.get_tool_list().begin();
+        tool_iter != bd.get_tool_list().end();
+        ++tool_iter)
+    {
+        benchmark_dict[*tool_iter] = FileLevel();
+
+        for (vector<string>::iterator filename_iter = data_file_list.begin();
+            filename_iter != data_file_list.end();
+            ++filename_iter)
+        {
+            Benchmark::FileLevel &file_dict = benchmark_dict[*tool_iter];
+            file_dict[*filename_iter.substr(2)] = KeyLevel();
+
+            for (list<string>::iterator key_iter = bd.get_key_list().begin();
+                key_iter != bd.get_key_list().end();
+                ++key_iter)
+            {
+                Benchmark::KeyLevel &key_dict
+                    = file_dict[*filename_iter.substr(2)]
+
+                if (*key_iter == "input_file_path")
+                    key_dict[*key_iter] = data_dir + *filename_iter.substr(2);
+                else if (*key_iter == "input_data")
+                {
+                    ifstream fin(*filename_iter);
+                    istreambuf_iterator<char> beg(fin), end;
+                    string json_str(beg, end);
+                    fin.close();
+
+                    stringstream ss(json_str);
+                    boost::property_tree::ptree pt;
+                    boost::property_tree::read_json(ss, pt);
+
+                    key_dict[*key_iter] = pt;
+                }
+                else
+                    key_dict[*key_iter] = NULL;
+            }
+        }
     }
 }
 
@@ -38,61 +84,34 @@ void test_go()
 }
 
 void result_dict_output(const string &result_file_path,
-        const BenchmarkDict &result_dict)
+        const Benchmark::BenchmarkDict &result_dict)
 {
+    ofstream serialized_file(result_file_path);
+    boost::archive::text_oarchive se(serialized_file);
+
+    Benchmark::Serialized serialized_obj(result_dict);
+
+    se << serialized_obj;
+    serialized_file.close();
 }
 
-
-void clean_workspace()
-{
-}
-
-void data_generating(const string &template_path,
-        const string &output_path,
-        const map<string, int> &config_dict)
-{
-    ;
-}
-
-
-const map<string, int> parse_config(istream &file_obj)
-{
-    map<string, int> result;
-
-    while (!file_obj.eof())
-    {
-        char buf[64];
-        file_obj.getline(buf, 63);
-        string line(buf);
-        vector<string> key_value;
-        boost::split(key_value, line, boost::is_any_of("="));
-
-        if (key_value.size() != 2)
-            continue;
-
-        int value = atoi(key_value[1].c_str())
-        result.insert(map<string, int>::value_type(key_value[0], value));
-    }
-
-    return result;
-}
 
 int main(int argc, char *argv[])
 {
-    // CLeaning workspace
-    cout << "CLeaning Workspace\n";
-    
-    // Testing Data Generating
-    cout << "Generating Test Data\n";
+    Benchmark::BasicData bd;
     
     // Initializing information dictionary by data in path data_dir
     cout << "Init. Data\n";
+    Benchmark::BenchmarkDict benchmark_dict();
+    init_data(bd.get_input_data_dir(), benchmark_dict);
     
     // Running Benchmark
     cout << "Running Benchmark\n";
+    test_go(benchmark_dict);
     
     // Processing the result and generating statistic results
     cout << "Saving Result to C++ Serialization.\n";
+    result_dict_output(bd.get_result_file_path(), benchmark_dict);
 
     exit(0);
 }

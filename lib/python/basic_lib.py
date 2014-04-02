@@ -27,9 +27,6 @@ lang_list = ['python', 'java', 'cpp']
 # The serialized file output path.
 seed_file_path = './output/'
 
-# The filename postfix of the files to be remove.
-rm_postfix_list = ['.pyc', '.pyo', '.pyd', '.serialized']
-
 
 class Scenario(object):
     '''

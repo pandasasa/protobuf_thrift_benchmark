@@ -51,6 +51,7 @@ class DataGenerator:
         # and the data in box will output to the data file.
         # Structure: [x[y[z]]]
 
+
     def x_gen(self):
         '''
         Expend the length of single value in template.
@@ -103,6 +104,7 @@ class DataGenerator:
                 ext_list(item, repeat)
             self._data_box[0].append(obj_list)
 
+
     def z_gen(self):
         '''
         Expend the number of keys in first level of template.
@@ -120,6 +122,7 @@ class DataGenerator:
                                     copy.copy(obj_list[y][x][key])
 
             self._data_box.append(obj_list)
+
 
     def gen(self):
         '''
@@ -145,6 +148,7 @@ class DataGenerator:
                     json.dump(self._data_box[z][y][x], data_file)
                     data_file.close()
 
+
 def del_org(dir, postfix):
     for f in os.listdir(dir):
         if os.path.isdir(os.path.join(os.getcwd(), f)) \
@@ -153,13 +157,28 @@ def del_org(dir, postfix):
         else:
             os.remove(os.path.join(dir, f))
 
+
+def parse_config(file_obj):
+    '''
+    Parsing the config file.
+    '''
+
+    result = {}
+
+    for line in file_obj:
+        key_value = line.split('=')
+        result[key_value[0]] = int(key_value[1])
+
+    return result
+
+
 if __name__ == '__main__':
     template_path = '../lib/template/address_book.json'
     output_path = './'
-    config_dict = {}
+
+    config_file = open('../gen.config', 'r')
+    config_dict = parse_config(config_file)
 
     del_org('./', '.json')
     gen = DataGenerator(template_path, output_path, config_dict)
-
     gen.gen()
-
