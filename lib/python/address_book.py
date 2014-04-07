@@ -138,9 +138,12 @@ class AddressBook(basic_lib.Scenario):
         address_book = ttypes.AddressBook()
 
         start_time = time.clock()
+        
         mem_buf = TTransport.TMemoryBuffer(self._data_dic['seed_file_str'])
         bin_proto = TCompactProtocol.TCompactProtocol(mem_buf)
+        
         address_book.read(bin_proto)
+        
         end_time = time.clock()
 
         return end_time - start_time

@@ -1,9 +1,14 @@
-#include <time.h>
+#ifndef ADDRESS_BOOK_HPP
+#define ADDRESS_BOOK_HPP
 
+#include <ctime>
+
+#include <list>
 #include <string>
 #include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
-#include <thrift/transport/TBufferTransport.h>
+#include <thrift/transport/TBufferTransports.h>
 #include <thrift/protocol/TCompactProtocol.h>
 
 #include "basic_lib.hpp"
@@ -15,8 +20,9 @@ namespace Benchmark {
     class AddressBook : public Scenario
     {
     public:
-        AddressBook(const string &tool, const KeyLevel &data_info_dict)
-            : Scenario(tool, data_info_dict) {}
+        AddressBook(const std::string &tool, KeyLevel &data_info_dict)
+            : Scenario(tool, data_info_dict), tool(tool),
+            data_dic(data_info_dict) {}
 
         long se_protobuf()
         {
@@ -26,11 +32,13 @@ namespace Benchmark {
 
             timespec start_time, end_time;
             BPro::AddressBook address_book;
+            boost::any &input_data = this->data_dic["input_data"];
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
 
-            for (bp::iterator person = this->data_dic["input_data"].begin();
-                person != this->data_dict["input_data"].end();
+            for (bp::ptree::iterator person
+                    = boost::any_cast<bp::ptree>(input_data).begin();
+                person != boost::any_cast<bp::ptree>(input_data).end();
                 ++person)
             {
                 BPro::Person *one_person = address_book.add_person();
@@ -43,9 +51,9 @@ namespace Benchmark {
                     one_person->set_email(
                             person->second.get<std::string>("email"));
                 
-                for (bp::iterator phone
-                        = person->second.get<bp::ptree>("phone").begin();
-                    phone != person->second.get<bp::ptree>("phone").end();
+                for (bp::ptree::iterator phone
+                        = person->second.get_child("phone").begin();
+                    phone != person->second.get_child("phone").end();
                     ++phone)
                 {
                     BPro::Person_PhoneNumber *one_phone
@@ -57,7 +65,8 @@ namespace Benchmark {
                     if (phone->second.get<std::string>("type") == "HOME"
                         || phone->second.get<std::string>("type") == "")
                         one_phone->set_type(BPro::Person::HOME);
-                    else if (phone->second.get<std::string>("type") == "MOBILE")
+                    else if (phone->second.get<std::string>("type")
+                            == "MOBILE")
                         one_phone->set_type(BPro::Person::MOBILE);
                     else if (phone->second.get<std::string>("type") == "WORK")
                         one_phone->set_type(BPro::Person::WORK);
@@ -68,7 +77,9 @@ namespace Benchmark {
             
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
-            this->data_dic["seed_file_str"] = address_book.SerializeToString();
+            std::string seed_str;
+            address_book.SerializeToString(&seed_str);
+            this->data_dic["seed_file_str"] = seed_str;
 
             return end_time.tv_nsec - start_time.tv_nsec;
         }
@@ -82,7 +93,11 @@ namespace Benchmark {
             BenchmarkProtobuf::AddressBook address_book;
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
-            address_book.ParseFromString(this->data_dic["seed_file_str"]);
+            
+            boost::any &str = this->data_dic["seed_file_str"];
+            
+            address_book.ParseFromString(boost::any_cast<std::string>(str));
+            
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
             return end_time.tv_nsec - start_time.tv_nsec;
@@ -101,26 +116,29 @@ namespace Benchmark {
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
 
-            att::TMemoryBuffer mem_buf;
+            boost::shared_ptr<att::TMemoryBuffer>
+                mem_buf(new att::TMemoryBuffer);
             atp::TCompactProtocol bin_proto(mem_buf);
+            boost::any &input_data = this->data_dic["input_data"];
 
-            for (bp::iterator person = this->data_dic["input_data"].begin();
-                person != this->data_dict["input_data"].end();
+            for (bp::ptree::iterator person
+                    = boost::any_cast<bp::ptree>(input_data).begin();
+                person != boost::any_cast<bp::ptree>(input_data).end();
                 ++person)
             {
                 BThr::Person one_person;
 
                 one_person.__set_name(person->second.get<std::string>("name"));
                 
-                one_person.set_id(person->second.get<int>("id"));
+                one_person.__set_id(person->second.get<int>("id"));
                 
                 if (person->second.get<std::string>("email") == "")
-                    one_person->set_email(
+                    one_person.__set_email(
                             person->second.get<std::string>("email"));
                 
-                for (bp::iterator phone
-                        = person->second.get<bp::ptree>("phone").begin();
-                    phone != person->second.get<bp::ptree>("phone").end();
+                for (bp::ptree::iterator phone
+                        = person->second.get_child("phone").begin();
+                    phone != person->second.get_child("phone").end();
                     ++phone)
                 {
                     BThr::PhoneNumber one_phone;
@@ -130,13 +148,13 @@ namespace Benchmark {
                     
                     if (phone->second.get<std::string>("type") == "HOME"
                         || phone->second.get<std::string>("type") == "")
-                        one_phone->__set_type(BThr::PhoneType::HOME);
+                        one_phone.__set_type(BThr::PhoneType::HOME);
                     else if (phone->second.get<std::string>("type") == "MOBILE")
-                        one_phone->__set_type(BThr::PhoneType::MOBILE);
+                        one_phone.__set_type(BThr::PhoneType::MOBILE);
                     else if (phone->second.get<std::string>("type") == "WORK")
-                        one_phone->__set_type(BThr::PhoneType::WORK);
+                        one_phone.__set_type(BThr::PhoneType::WORK);
                     else
-                        one_phone->__set_type(BThr::PhoneType::OTHER);
+                        one_phone.__set_type(BThr::PhoneType::OTHER);
                     
                     one_person.phone.push_back(one_phone);
                 }
@@ -144,11 +162,12 @@ namespace Benchmark {
                 address_book.person.push_back(one_person);
             }
             
-            address_book.write(bin_proto);
+            atp::TProtocol *bin_proto_ptr = &bin_proto;
+            address_book.write(bin_proto_ptr);
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
-            this->data_dic["seed_file_str"] = mem_buf.getvalue();
+            this->data_dic["seed_file_str"] = mem_buf->getBufferAsString();
 
             return end_time.tv_nsec - start_time.tv_nsec;
         }
@@ -163,9 +182,21 @@ namespace Benchmark {
             timespec start_time, end_time;
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
-            att::TMemoryBuffer mem_buf(this->data_dic["seed_file_str"]);
+            
+            boost::any &str = this->data_dic["seed_file_str"];
+            std::string std_str = boost::any_cast<std::string>(str);
+            uint8_t *buf = new uint8_t [std_str.length()];
+            memcpy(buf, std_str.c_str(), std_str.length());
+
+            boost::shared_ptr<att::TMemoryBuffer>
+                mem_buf(new att::TMemoryBuffer(buf, std_str.length()));
             atp::TCompactProtocol bin_proto(mem_buf);
-            address_book.read(bin_proto);
+            
+            atp::TProtocol *bin_proto_ptr = &bin_proto;
+            address_book.read(bin_proto_ptr);
+
+            delete [] buf;
+
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
             return end_time.tv_nsec - start_time.tv_nsec;
@@ -176,58 +207,90 @@ namespace Benchmark {
         {
             namespace bp = boost::property_tree;
 
+            timespec start_time, end_time;
             bp::ptree se_dict;
 
-            timespec start_time, end_time;
+            clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
 
-            for (bp::iterator person = this->data_dic["input_data"].begin();
-                person != this->data_dict["input_data"].end();
+            bp::ptree person_list;
+            se_dict.put_child("person", person_list);
+            boost::any &input_data = this->data_dic["input_data"];
+
+            for (bp::ptree::iterator person
+                    = boost::any_cast<bp::ptree>(input_data).begin();
+                person != boost::any_cast<bp::ptree>(input_data).end();
                 ++person)
             {
-                BThr::Person one_person;
+                bp::ptree person_dict;
+                person_dict.add("name",
+                        person->second.get<std::string>("name"));
+                person_dict.add("id", person->second.get<int>("id"));
 
-                one_person.__set_name(person->second.get<std::string>("name"));
-                
-                one_person.set_id(person->second.get<int>("id"));
-                
-                if (person->second.get<std::string>("email") == "")
-                    one_person->set_email(
+                if (person->second.get<std::string>("email") != "")
+                    person_dict.add("email",
                             person->second.get<std::string>("email"));
-                
-                for (bp::iterator phone
-                        = person->second.get<bp::ptree>("phone").begin();
-                    phone != person->second.get<bp::ptree>("phone").end();
+
+                bp::ptree phone_list;
+                person_dict.put_child("phone", phone_list);
+
+                for (bp::ptree::iterator phone
+                        = person->second.get_child("phone").begin();
+                    phone != person->second.get_child("phone").end();
                     ++phone)
                 {
-                    BThr::PhoneNumber one_phone;
-                    
-                    one_phone.__set_number(
+                    bp::ptree phone_dict;
+                    phone_dict.add("number",
                             phone->second.get<std::string>("number"));
                     
-                    if (phone->second.get<std::string>("type") == "HOME"
-                        || phone->second.get<std::string>("type") == "")
-                        one_phone->__set_type(BThr::PhoneType::HOME);
-                    else if (phone->second.get<std::string>("type") == "MOBILE")
-                        one_phone->__set_type(BThr::PhoneType::MOBILE);
-                    else if (phone->second.get<std::string>("type") == "WORK")
-                        one_phone->__set_type(BThr::PhoneType::WORK);
+                    if (phone->second.get<std::string>("type") == "")
+                        phone_dict.add("type", "HOME");
                     else
-                        one_phone->__set_type(BThr::PhoneType::OTHER);
-                    
-                    one_person.phone.push_back(one_phone);
+                        phone_dict.add("type",
+                                phone->second.get<std::string>("type"));
+
+                    phone_list.push_back(make_pair("", phone_dict));
                 }
-                
-                address_book.person.push_back(one_person);
+
+                person_list.push_back(make_pair("", person_dict));
             }
-            
-            address_book.write(bin_proto);
+
+            std::stringstream json_ss;
+            bp::json_parser::write_json(json_ss, se_dict);
+            std::string json_obj = json_ss.str();
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
+            this->data_dic["seed_file_str"] = json_obj;
+
+            return end_time.tv_nsec - start_time.tv_nsec;
         }
 
 
-        long de_json() {}
+        long de_json()
+        {
+            namespace bp = boost::property_tree;
+
+            timespec start_time, end_time;
+
+            clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
+            
+            bp::ptree json_obj;
+            boost::any &str = this->data_dic["seed_file_str"];
+            std::stringstream json_ss(boost::any_cast<std::string>(str));
+            
+            bp::json_parser::read_json(json_ss, json_obj);
+            
+            clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
+
+            return end_time.tv_nsec - start_time.tv_nsec;
+        }
+
+
+    private:
+        std::string tool;
+        KeyLevel &data_dic;
     };
 }
+
+#endif
 

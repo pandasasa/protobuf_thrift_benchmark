@@ -1,7 +1,10 @@
+#ifndef BASIC_LIB_HPP
+#define BASIC_LIB_HPP
+
 #include <boost/any.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/list.hpp>
-#include <boost/serialization/std::string.hpp>
+#include <boost/serialization/string.hpp>
 
 
 namespace Benchmark {
@@ -33,8 +36,6 @@ namespace Benchmark {
                 = std::list<std::string>(data_key, data_key + 7);
             this->lang_list
                 = std::list<std::string>(lang, lang + 3);
-            this->rm_postfix_list
-                = std::list<std::string>(postfix, postfix + 1);
         }
 
         const std::string &get_input_data_dir() const
@@ -78,7 +79,7 @@ namespace Benchmark {
     class Scenario
     {
     public:
-        Scenario(const string &tool, const KeyLevel &data_info_dict)
+        Scenario(const std::string &tool, KeyLevel &data_info_dict)
             : tool(tool), data_dic(data_info_dict) {}
 
         void serialization() 
@@ -134,12 +135,12 @@ namespace Benchmark {
         virtual long se_json() = 0;
         virtual long de_json() = 0;
 
-    protected:
-        string tool;
-        KeyLevel &data_dic;
-
     private:
-        const int REPEAT_TIME = 100;
+        std::string tool;
+        KeyLevel &data_dic;
+        const static int REPEAT_TIME = 100;
     };
-
 }
+
+#endif
+

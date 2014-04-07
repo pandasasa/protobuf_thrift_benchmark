@@ -123,25 +123,33 @@ class Scenario(object):
         se_dict = dict()
 
         start_time = time.clock()
+
+        se_dict['person'] = list()
         
         for person in self._data_dic['input_data']['person']:
-            se_dict['person'] = dict()
-            se_dict['person']['name'] = person['name']
-            se_dict['person']['id'] = person['id']
+            person_dict = dict()
+            person_dict['name'] = person['name']
+            person_dict['id'] = person['id']
+
             if person['email'] != '':
-                se_dict['person']['email'] = person['email']
-            se_dict['person']['phone'] = list()
+                person_dict['email'] = person['email']
+
+            person_dict['phone'] = list()
+
             for phone in person['phone']:
-                tmp_dict = dict()
-                tmp_dict['number'] = phone['number']
+                phone_dict = dict()
+                phone_dict['number'] = phone['number']
+
                 if phone['type'] == '':
-                    tmp_dict['type'] = 'HOME'
+                    phone_dict['type'] = 'HOME'
                 else:
-                    tmp_dict['type'] = phone['type']
+                    phone_dict['type'] = phone['type']
 
-                se_dict['person']['phone'].append(tmp_dict)
+                person_dict['phone'].append(phone_dict)
 
-        json_obj = json.dumps(self._data_dic['input_data'])
+            se_dict['person'].append(person_dict)
+
+        json_obj = json.dumps(se_dict)
 
         end_time = time.clock()
 
