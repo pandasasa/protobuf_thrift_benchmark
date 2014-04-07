@@ -16,6 +16,8 @@
 #include <google/protobuf/wire_format.h>
 // @@protoc_insertion_point(includes)
 
+namespace BenchmarkProtobuf {
+
 namespace {
 
 const ::google::protobuf::Descriptor* Person_descriptor_ = NULL;
@@ -126,14 +128,15 @@ void protobuf_AddDesc_address_5fbook_5fprotobuf_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\033address_book_protobuf.proto\"\323\001\n\006Person"
-    "\022\014\n\004name\030\001 \002(\t\022\n\n\002id\030\002 \002(\005\022\r\n\005email\030\003 \001("
-    "\t\022\"\n\005phone\030\004 \003(\0132\023.Person.PhoneNumber\032D\n"
-    "\013PhoneNumber\022\016\n\006number\030\001 \002(\t\022%\n\004type\030\002 \001"
-    "(\0162\021.Person.PhoneType:\004HOME\"6\n\tPhoneType"
-    "\022\n\n\006MOBILE\020\000\022\010\n\004HOME\020\001\022\010\n\004WORK\020\002\022\t\n\005OTHE"
-    "R\020\003\"&\n\013AddressBook\022\027\n\006person\030\001 \003(\0132\007.Per"
-    "son", 283);
+    "\n\033address_book_protobuf.proto\022\021Benchmark"
+    "Protobuf\"\367\001\n\006Person\022\014\n\004name\030\001 \002(\t\022\n\n\002id\030"
+    "\002 \002(\005\022\r\n\005email\030\003 \001(\t\0224\n\005phone\030\004 \003(\0132%.Be"
+    "nchmarkProtobuf.Person.PhoneNumber\032V\n\013Ph"
+    "oneNumber\022\016\n\006number\030\001 \002(\t\0227\n\004type\030\002 \001(\0162"
+    "#.BenchmarkProtobuf.Person.PhoneType:\004HO"
+    "ME\"6\n\tPhoneType\022\n\n\006MOBILE\020\000\022\010\n\004HOME\020\001\022\010\n"
+    "\004WORK\020\002\022\t\n\005OTHER\020\003\"8\n\013AddressBook\022)\n\006per"
+    "son\030\001 \003(\0132\031.BenchmarkProtobuf.Person", 356);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "address_book_protobuf.proto", &protobuf_RegisterTypes);
   Person::default_instance_ = new Person();
@@ -273,7 +276,7 @@ bool Person_PhoneNumber::MergePartialFromCodedStream(
         break;
       }
 
-      // optional .Person.PhoneType type = 2 [default = HOME];
+      // optional .BenchmarkProtobuf.Person.PhoneType type = 2 [default = HOME];
       case 2: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
@@ -282,8 +285,8 @@ bool Person_PhoneNumber::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          if (::Person_PhoneType_IsValid(value)) {
-            set_type(static_cast< ::Person_PhoneType >(value));
+          if (::BenchmarkProtobuf::Person_PhoneType_IsValid(value)) {
+            set_type(static_cast< ::BenchmarkProtobuf::Person_PhoneType >(value));
           } else {
             mutable_unknown_fields()->AddVarint(2, value);
           }
@@ -321,7 +324,7 @@ void Person_PhoneNumber::SerializeWithCachedSizes(
       1, this->number(), output);
   }
 
-  // optional .Person.PhoneType type = 2 [default = HOME];
+  // optional .BenchmarkProtobuf.Person.PhoneType type = 2 [default = HOME];
   if (has_type()) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       2, this->type(), output);
@@ -345,7 +348,7 @@ void Person_PhoneNumber::SerializeWithCachedSizes(
         1, this->number(), target);
   }
 
-  // optional .Person.PhoneType type = 2 [default = HOME];
+  // optional .BenchmarkProtobuf.Person.PhoneType type = 2 [default = HOME];
   if (has_type()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
       2, this->type(), target);
@@ -369,7 +372,7 @@ int Person_PhoneNumber::ByteSize() const {
           this->number());
     }
 
-    // optional .Person.PhoneType type = 2 [default = HOME];
+    // optional .BenchmarkProtobuf.Person.PhoneType type = 2 [default = HOME];
     if (has_type()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
@@ -590,7 +593,7 @@ bool Person::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .Person.PhoneNumber phone = 4;
+      // repeated .BenchmarkProtobuf.Person.PhoneNumber phone = 4;
       case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -646,7 +649,7 @@ void Person::SerializeWithCachedSizes(
       3, this->email(), output);
   }
 
-  // repeated .Person.PhoneNumber phone = 4;
+  // repeated .BenchmarkProtobuf.Person.PhoneNumber phone = 4;
   for (int i = 0; i < this->phone_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       4, this->phone(i), output);
@@ -685,7 +688,7 @@ void Person::SerializeWithCachedSizes(
         3, this->email(), target);
   }
 
-  // repeated .Person.PhoneNumber phone = 4;
+  // repeated .BenchmarkProtobuf.Person.PhoneNumber phone = 4;
   for (int i = 0; i < this->phone_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -725,7 +728,7 @@ int Person::ByteSize() const {
     }
 
   }
-  // repeated .Person.PhoneNumber phone = 4;
+  // repeated .BenchmarkProtobuf.Person.PhoneNumber phone = 4;
   total_size += 1 * this->phone_size();
   for (int i = 0; i < this->phone_size(); i++) {
     total_size +=
@@ -882,7 +885,7 @@ bool AddressBook::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   while ((tag = input->ReadTag()) != 0) {
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .Person person = 1;
+      // repeated .BenchmarkProtobuf.Person person = 1;
       case 1: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
@@ -915,7 +918,7 @@ bool AddressBook::MergePartialFromCodedStream(
 
 void AddressBook::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // repeated .Person person = 1;
+  // repeated .BenchmarkProtobuf.Person person = 1;
   for (int i = 0; i < this->person_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->person(i), output);
@@ -929,7 +932,7 @@ void AddressBook::SerializeWithCachedSizes(
 
 ::google::protobuf::uint8* AddressBook::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // repeated .Person person = 1;
+  // repeated .BenchmarkProtobuf.Person person = 1;
   for (int i = 0; i < this->person_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
@@ -946,7 +949,7 @@ void AddressBook::SerializeWithCachedSizes(
 int AddressBook::ByteSize() const {
   int total_size = 0;
 
-  // repeated .Person person = 1;
+  // repeated .BenchmarkProtobuf.Person person = 1;
   total_size += 1 * this->person_size();
   for (int i = 0; i < this->person_size(); i++) {
     total_size +=
@@ -1022,5 +1025,7 @@ void AddressBook::Swap(AddressBook* other) {
 
 
 // @@protoc_insertion_point(namespace_scope)
+
+}  // namespace BenchmarkProtobuf
 
 // @@protoc_insertion_point(global_scope)

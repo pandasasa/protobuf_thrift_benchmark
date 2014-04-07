@@ -1,6 +1,6 @@
-namespace py AddressBook
-namespace cpp AddressBook
-namespace java AddressBook
+namespace py BenchmarkThrift
+namespace cpp BenchmarkThrift
+namespace java BenchmarkThrift
 
 enum PhoneType {
     MOBILE,

@@ -109,6 +109,10 @@ class Scenario(object):
         pass
     def se_thrift(self):
         pass
+    def de_protobuf(self):
+        pass
+    def de_thrift(self):
+        pass
 
 
     def se_json(self):
@@ -144,12 +148,6 @@ class Scenario(object):
         self._data_dic['seed_file_str'] = json_obj
 
         return end_time - start_time
-
-
-    def de_protobuf(self):
-        pass
-    def de_thrift(self):
-        pass
 
 
     def de_json(self):

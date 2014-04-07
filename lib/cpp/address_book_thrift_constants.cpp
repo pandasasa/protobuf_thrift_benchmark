@@ -6,7 +6,7 @@
  */
 #include "address_book_thrift_constants.h"
 
-namespace AddressBook {
+namespace BenchmarkThrift {
 
 const address_book_thriftConstants g_address_book_thrift_constants;
 

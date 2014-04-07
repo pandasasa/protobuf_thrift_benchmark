@@ -9,7 +9,7 @@
 
 #include "address_book_thrift_types.h"
 
-namespace AddressBook {
+namespace BenchmarkThrift {
 
 class address_book_thriftConstants {
  public:

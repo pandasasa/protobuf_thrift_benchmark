@@ -27,6 +27,8 @@
 #include <google/protobuf/unknown_field_set.h>
 // @@protoc_insertion_point(includes)
 
+namespace BenchmarkProtobuf {
+
 // Internal implementation detail -- do not call these.
 void  protobuf_AddDesc_address_5fbook_5fprotobuf_2eproto();
 void protobuf_AssignDesc_address_5fbook_5fprotobuf_2eproto();
@@ -125,14 +127,14 @@ class Person_PhoneNumber : public ::google::protobuf::Message {
   inline ::std::string* release_number();
   inline void set_allocated_number(::std::string* number);
 
-  // optional .Person.PhoneType type = 2 [default = HOME];
+  // optional .BenchmarkProtobuf.Person.PhoneType type = 2 [default = HOME];
   inline bool has_type() const;
   inline void clear_type();
   static const int kTypeFieldNumber = 2;
-  inline ::Person_PhoneType type() const;
-  inline void set_type(::Person_PhoneType value);
+  inline ::BenchmarkProtobuf::Person_PhoneType type() const;
+  inline void set_type(::BenchmarkProtobuf::Person_PhoneType value);
 
-  // @@protoc_insertion_point(class_scope:Person.PhoneNumber)
+  // @@protoc_insertion_point(class_scope:BenchmarkProtobuf.Person.PhoneNumber)
  private:
   inline void set_has_number();
   inline void clear_has_number();
@@ -269,19 +271,19 @@ class Person : public ::google::protobuf::Message {
   inline ::std::string* release_email();
   inline void set_allocated_email(::std::string* email);
 
-  // repeated .Person.PhoneNumber phone = 4;
+  // repeated .BenchmarkProtobuf.Person.PhoneNumber phone = 4;
   inline int phone_size() const;
   inline void clear_phone();
   static const int kPhoneFieldNumber = 4;
-  inline const ::Person_PhoneNumber& phone(int index) const;
-  inline ::Person_PhoneNumber* mutable_phone(int index);
-  inline ::Person_PhoneNumber* add_phone();
-  inline const ::google::protobuf::RepeatedPtrField< ::Person_PhoneNumber >&
+  inline const ::BenchmarkProtobuf::Person_PhoneNumber& phone(int index) const;
+  inline ::BenchmarkProtobuf::Person_PhoneNumber* mutable_phone(int index);
+  inline ::BenchmarkProtobuf::Person_PhoneNumber* add_phone();
+  inline const ::google::protobuf::RepeatedPtrField< ::BenchmarkProtobuf::Person_PhoneNumber >&
       phone() const;
-  inline ::google::protobuf::RepeatedPtrField< ::Person_PhoneNumber >*
+  inline ::google::protobuf::RepeatedPtrField< ::BenchmarkProtobuf::Person_PhoneNumber >*
       mutable_phone();
 
-  // @@protoc_insertion_point(class_scope:Person)
+  // @@protoc_insertion_point(class_scope:BenchmarkProtobuf.Person)
  private:
   inline void set_has_name();
   inline void clear_has_name();
@@ -294,7 +296,7 @@ class Person : public ::google::protobuf::Message {
 
   ::std::string* name_;
   ::std::string* email_;
-  ::google::protobuf::RepeatedPtrField< ::Person_PhoneNumber > phone_;
+  ::google::protobuf::RepeatedPtrField< ::BenchmarkProtobuf::Person_PhoneNumber > phone_;
   ::google::protobuf::int32 id_;
 
   mutable int _cached_size_;
@@ -363,24 +365,24 @@ class AddressBook : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // repeated .Person person = 1;
+  // repeated .BenchmarkProtobuf.Person person = 1;
   inline int person_size() const;
   inline void clear_person();
   static const int kPersonFieldNumber = 1;
-  inline const ::Person& person(int index) const;
-  inline ::Person* mutable_person(int index);
-  inline ::Person* add_person();
-  inline const ::google::protobuf::RepeatedPtrField< ::Person >&
+  inline const ::BenchmarkProtobuf::Person& person(int index) const;
+  inline ::BenchmarkProtobuf::Person* mutable_person(int index);
+  inline ::BenchmarkProtobuf::Person* add_person();
+  inline const ::google::protobuf::RepeatedPtrField< ::BenchmarkProtobuf::Person >&
       person() const;
-  inline ::google::protobuf::RepeatedPtrField< ::Person >*
+  inline ::google::protobuf::RepeatedPtrField< ::BenchmarkProtobuf::Person >*
       mutable_person();
 
-  // @@protoc_insertion_point(class_scope:AddressBook)
+  // @@protoc_insertion_point(class_scope:BenchmarkProtobuf.AddressBook)
  private:
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
-  ::google::protobuf::RepeatedPtrField< ::Person > person_;
+  ::google::protobuf::RepeatedPtrField< ::BenchmarkProtobuf::Person > person_;
 
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(1 + 31) / 32];
@@ -469,7 +471,7 @@ inline void Person_PhoneNumber::set_allocated_number(::std::string* number) {
   }
 }
 
-// optional .Person.PhoneType type = 2 [default = HOME];
+// optional .BenchmarkProtobuf.Person.PhoneType type = 2 [default = HOME];
 inline bool Person_PhoneNumber::has_type() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -483,11 +485,11 @@ inline void Person_PhoneNumber::clear_type() {
   type_ = 1;
   clear_has_type();
 }
-inline ::Person_PhoneType Person_PhoneNumber::type() const {
-  return static_cast< ::Person_PhoneType >(type_);
+inline ::BenchmarkProtobuf::Person_PhoneType Person_PhoneNumber::type() const {
+  return static_cast< ::BenchmarkProtobuf::Person_PhoneType >(type_);
 }
-inline void Person_PhoneNumber::set_type(::Person_PhoneType value) {
-  assert(::Person_PhoneType_IsValid(value));
+inline void Person_PhoneNumber::set_type(::BenchmarkProtobuf::Person_PhoneType value) {
+  assert(::BenchmarkProtobuf::Person_PhoneType_IsValid(value));
   set_has_type();
   type_ = value;
 }
@@ -658,27 +660,27 @@ inline void Person::set_allocated_email(::std::string* email) {
   }
 }
 
-// repeated .Person.PhoneNumber phone = 4;
+// repeated .BenchmarkProtobuf.Person.PhoneNumber phone = 4;
 inline int Person::phone_size() const {
   return phone_.size();
 }
 inline void Person::clear_phone() {
   phone_.Clear();
 }
-inline const ::Person_PhoneNumber& Person::phone(int index) const {
+inline const ::BenchmarkProtobuf::Person_PhoneNumber& Person::phone(int index) const {
   return phone_.Get(index);
 }
-inline ::Person_PhoneNumber* Person::mutable_phone(int index) {
+inline ::BenchmarkProtobuf::Person_PhoneNumber* Person::mutable_phone(int index) {
   return phone_.Mutable(index);
 }
-inline ::Person_PhoneNumber* Person::add_phone() {
+inline ::BenchmarkProtobuf::Person_PhoneNumber* Person::add_phone() {
   return phone_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::Person_PhoneNumber >&
+inline const ::google::protobuf::RepeatedPtrField< ::BenchmarkProtobuf::Person_PhoneNumber >&
 Person::phone() const {
   return phone_;
 }
-inline ::google::protobuf::RepeatedPtrField< ::Person_PhoneNumber >*
+inline ::google::protobuf::RepeatedPtrField< ::BenchmarkProtobuf::Person_PhoneNumber >*
 Person::mutable_phone() {
   return &phone_;
 }
@@ -687,27 +689,27 @@ Person::mutable_phone() {
 
 // AddressBook
 
-// repeated .Person person = 1;
+// repeated .BenchmarkProtobuf.Person person = 1;
 inline int AddressBook::person_size() const {
   return person_.size();
 }
 inline void AddressBook::clear_person() {
   person_.Clear();
 }
-inline const ::Person& AddressBook::person(int index) const {
+inline const ::BenchmarkProtobuf::Person& AddressBook::person(int index) const {
   return person_.Get(index);
 }
-inline ::Person* AddressBook::mutable_person(int index) {
+inline ::BenchmarkProtobuf::Person* AddressBook::mutable_person(int index) {
   return person_.Mutable(index);
 }
-inline ::Person* AddressBook::add_person() {
+inline ::BenchmarkProtobuf::Person* AddressBook::add_person() {
   return person_.Add();
 }
-inline const ::google::protobuf::RepeatedPtrField< ::Person >&
+inline const ::google::protobuf::RepeatedPtrField< ::BenchmarkProtobuf::Person >&
 AddressBook::person() const {
   return person_;
 }
-inline ::google::protobuf::RepeatedPtrField< ::Person >*
+inline ::google::protobuf::RepeatedPtrField< ::BenchmarkProtobuf::Person >*
 AddressBook::mutable_person() {
   return &person_;
 }
@@ -715,13 +717,15 @@ AddressBook::mutable_person() {
 
 // @@protoc_insertion_point(namespace_scope)
 
+}  // namespace BenchmarkProtobuf
+
 #ifndef SWIG
 namespace google {
 namespace protobuf {
 
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::Person_PhoneType>() {
-  return ::Person_PhoneType_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::BenchmarkProtobuf::Person_PhoneType>() {
+  return ::BenchmarkProtobuf::Person_PhoneType_descriptor();
 }
 
 }  // namespace google

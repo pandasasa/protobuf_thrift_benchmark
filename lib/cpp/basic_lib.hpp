@@ -83,8 +83,8 @@ namespace Benchmark {
 
         void serialization() 
         {
-            double final_time = -1;
-            double se_time = 0;
+            long final_time = -1;
+            long se_time = 0;
 
             for (int i = 0; i < this->REPEAT_TIME; i++)
             {
@@ -106,8 +106,8 @@ namespace Benchmark {
 
         void deserialization()
         {
-            double final_time = -1;
-            double de_time = 0;
+            long final_time = -1;
+            long de_time = 0;
 
             for (int i = 0; i < this->REPEAT_TIME; i++)
             {
@@ -127,12 +127,12 @@ namespace Benchmark {
             this->data_dic["dese_time"] = final_time;
         }
 
-        virtual double se_protobuf() = 0;
-        virtual double se_thrift() = 0;
-        virtual double de_protobuf() = 0;
-        virtual double de_thrift() = 0;
-        virtual double se_json() = 0;
-        virtual double de_json() = 0;
+        virtual long se_protobuf() = 0;
+        virtual long se_thrift() = 0;
+        virtual long de_protobuf() = 0;
+        virtual long de_thrift() = 0;
+        virtual long se_json() = 0;
+        virtual long de_json() = 0;
 
     protected:
         string tool;

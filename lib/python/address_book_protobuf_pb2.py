@@ -12,14 +12,14 @@ from google.protobuf import descriptor_pb2
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='address_book_protobuf.proto',
-  package='',
-  serialized_pb='\n\x1b\x61\x64\x64ress_book_protobuf.proto\"\xd3\x01\n\x06Person\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\n\n\x02id\x18\x02 \x02(\x05\x12\r\n\x05\x65mail\x18\x03 \x01(\t\x12\"\n\x05phone\x18\x04 \x03(\x0b\x32\x13.Person.PhoneNumber\x1a\x44\n\x0bPhoneNumber\x12\x0e\n\x06number\x18\x01 \x02(\t\x12%\n\x04type\x18\x02 \x01(\x0e\x32\x11.Person.PhoneType:\x04HOME\"6\n\tPhoneType\x12\n\n\x06MOBILE\x10\x00\x12\x08\n\x04HOME\x10\x01\x12\x08\n\x04WORK\x10\x02\x12\t\n\x05OTHER\x10\x03\"&\n\x0b\x41\x64\x64ressBook\x12\x17\n\x06person\x18\x01 \x03(\x0b\x32\x07.Person')
+  package='BenchmarkProtobuf',
+  serialized_pb='\n\x1b\x61\x64\x64ress_book_protobuf.proto\x12\x11\x42\x65nchmarkProtobuf\"\xf7\x01\n\x06Person\x12\x0c\n\x04name\x18\x01 \x02(\t\x12\n\n\x02id\x18\x02 \x02(\x05\x12\r\n\x05\x65mail\x18\x03 \x01(\t\x12\x34\n\x05phone\x18\x04 \x03(\x0b\x32%.BenchmarkProtobuf.Person.PhoneNumber\x1aV\n\x0bPhoneNumber\x12\x0e\n\x06number\x18\x01 \x02(\t\x12\x37\n\x04type\x18\x02 \x01(\x0e\x32#.BenchmarkProtobuf.Person.PhoneType:\x04HOME\"6\n\tPhoneType\x12\n\n\x06MOBILE\x10\x00\x12\x08\n\x04HOME\x10\x01\x12\x08\n\x04WORK\x10\x02\x12\t\n\x05OTHER\x10\x03\"8\n\x0b\x41\x64\x64ressBook\x12)\n\x06person\x18\x01 \x03(\x0b\x32\x19.BenchmarkProtobuf.Person')
 
 
 
 _PERSON_PHONETYPE = _descriptor.EnumDescriptor(
   name='PhoneType',
-  full_name='Person.PhoneType',
+  full_name='BenchmarkProtobuf.Person.PhoneType',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -42,27 +42,27 @@ _PERSON_PHONETYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=189,
-  serialized_end=243,
+  serialized_start=244,
+  serialized_end=298,
 )
 
 
 _PERSON_PHONENUMBER = _descriptor.Descriptor(
   name='PhoneNumber',
-  full_name='Person.PhoneNumber',
+  full_name='BenchmarkProtobuf.Person.PhoneNumber',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='number', full_name='Person.PhoneNumber.number', index=0,
+      name='number', full_name='BenchmarkProtobuf.Person.PhoneNumber.number', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='type', full_name='Person.PhoneNumber.type', index=1,
+      name='type', full_name='BenchmarkProtobuf.Person.PhoneNumber.type', index=1,
       number=2, type=14, cpp_type=8, label=1,
       has_default_value=True, default_value=1,
       message_type=None, enum_type=None, containing_type=None,
@@ -77,40 +77,40 @@ _PERSON_PHONENUMBER = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=119,
-  serialized_end=187,
+  serialized_start=156,
+  serialized_end=242,
 )
 
 _PERSON = _descriptor.Descriptor(
   name='Person',
-  full_name='Person',
+  full_name='BenchmarkProtobuf.Person',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='Person.name', index=0,
+      name='name', full_name='BenchmarkProtobuf.Person.name', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='id', full_name='Person.id', index=1,
+      name='id', full_name='BenchmarkProtobuf.Person.id', index=1,
       number=2, type=5, cpp_type=1, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='email', full_name='Person.email', index=2,
+      name='email', full_name='BenchmarkProtobuf.Person.email', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='phone', full_name='Person.phone', index=3,
+      name='phone', full_name='BenchmarkProtobuf.Person.phone', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -126,20 +126,20 @@ _PERSON = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=32,
-  serialized_end=243,
+  serialized_start=51,
+  serialized_end=298,
 )
 
 
 _ADDRESSBOOK = _descriptor.Descriptor(
   name='AddressBook',
-  full_name='AddressBook',
+  full_name='BenchmarkProtobuf.AddressBook',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='person', full_name='AddressBook.person', index=0,
+      name='person', full_name='BenchmarkProtobuf.AddressBook.person', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -154,8 +154,8 @@ _ADDRESSBOOK = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=245,
-  serialized_end=283,
+  serialized_start=300,
+  serialized_end=356,
 )
 
 _PERSON_PHONENUMBER.fields_by_name['type'].enum_type = _PERSON_PHONETYPE
@@ -173,16 +173,16 @@ class Person(_message.Message):
     __metaclass__ = _reflection.GeneratedProtocolMessageType
     DESCRIPTOR = _PERSON_PHONENUMBER
 
-    # @@protoc_insertion_point(class_scope:Person.PhoneNumber)
+    # @@protoc_insertion_point(class_scope:BenchmarkProtobuf.Person.PhoneNumber)
   DESCRIPTOR = _PERSON
 
-  # @@protoc_insertion_point(class_scope:Person)
+  # @@protoc_insertion_point(class_scope:BenchmarkProtobuf.Person)
 
 class AddressBook(_message.Message):
   __metaclass__ = _reflection.GeneratedProtocolMessageType
   DESCRIPTOR = _ADDRESSBOOK
 
-  # @@protoc_insertion_point(class_scope:AddressBook)
+  # @@protoc_insertion_point(class_scope:BenchmarkProtobuf.AddressBook)
 
 
 # @@protoc_insertion_point(module_scope)

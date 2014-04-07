@@ -4,7 +4,7 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-package AddressBook;
+package BenchmarkThrift;
 
 import org.apache.thrift.scheme.IScheme;
 import org.apache.thrift.scheme.SchemeFactory;
@@ -130,7 +130,7 @@ public class PhoneNumber implements org.apache.thrift.TBase<PhoneNumber, PhoneNu
   }
 
   public PhoneNumber() {
-    this.type = AddressBook.PhoneType.HOME;
+    this.type = BenchmarkThrift.PhoneType.HOME;
 
   }
 
@@ -160,7 +160,7 @@ public class PhoneNumber implements org.apache.thrift.TBase<PhoneNumber, PhoneNu
   @Override
   public void clear() {
     this.number = null;
-    this.type = AddressBook.PhoneType.HOME;
+    this.type = BenchmarkThrift.PhoneType.HOME;
 
   }
 

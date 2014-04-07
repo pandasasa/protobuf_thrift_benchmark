@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-namespace AddressBook {
+namespace BenchmarkThrift {
 
 int _kPhoneTypeValues[] = {
   PhoneType::MOBILE,

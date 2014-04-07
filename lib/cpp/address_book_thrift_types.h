@@ -15,7 +15,7 @@
 #include <thrift/cxxfunctional.h>
 
 
-namespace AddressBook {
+namespace BenchmarkThrift {
 
 struct PhoneType {
   enum type {
