@@ -91,7 +91,7 @@ void test_go(Benchmark::BenchmarkDict &data_dict)
         tool_iter != data_dict.end();
         ++tool_iter)
     {
-        cout << "Tool: " << tool_iter->first << endl;
+        cout << "  Tool: " << tool_iter->first << endl;
 
         Benchmark::FileLevel &file_level = data_dict[tool_iter->first];
 
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
     test_go(benchmark_dict);
     
     // Processing the result and generating statistic results
-    cout << "Saving Result to C++ Serialization.\n";
+    cout << "Saving Result to boost::serialization.\n";
     result_dict_output(bd.get_result_file_path(), benchmark_dict);
 
     exit(0);

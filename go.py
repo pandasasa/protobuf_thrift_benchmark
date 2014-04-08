@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import compileall
 
 from data import data_generator
 
@@ -34,7 +35,7 @@ def data_generating(template_path, output_path, config_dict):
 
 if __name__ == '__main__':
     # The filename postfix of the files to be remove.
-    rm_postfix_list = ['.pyc', '.pyo', '.pyd', '.serialized']
+    rm_postfix_list = ['.pyc', '.pyo', '.pyd', '.serialized', '.o', '.exe']
 
     # Cleaning the workspace
     print 'Cleaning Workspace'
@@ -44,10 +45,20 @@ if __name__ == '__main__':
     template_path = './lib/template/address_book_json.json'
     output_path = './data/'
 
-    print 'Loading Config'
+    print 'Loading gen.config'
     config_file = open('./gen.config', 'r')
     parsing_result = data_generator.parse_config(config_file)
     config_file.close()
 
     print 'Testing Data Generating'
     data_generating(template_path, output_path, parsing_result)
+
+    # Compiling Python file
+    print 'Compiling Python Benchmark'
+    # compileall.compile_dir('./', quiet=True)
+
+    # Compiling C++ file
+    print 'Compiling C++ Benchmark'
+
+    # Compiling Java file
+    print 'Compiling Java Benchmark'

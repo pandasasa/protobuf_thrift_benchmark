@@ -64,7 +64,7 @@ def test_go(data_dict):
     '''
 
     for tool in data_dict.keys():
-        print 'Tool: ' + tool
+        print '  Tool: ' + tool
         for file_name in data_dict[tool].keys():
             data_info = data_dict[tool][file_name]
 

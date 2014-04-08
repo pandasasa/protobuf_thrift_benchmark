@@ -1,6 +1,7 @@
 #ifndef ADDRESS_BOOK_HPP
 #define ADDRESS_BOOK_HPP
 
+#include <iostream>
 #include <ctime>
 
 #include <list>
@@ -32,13 +33,14 @@ namespace Benchmark {
 
             timespec start_time, end_time;
             BPro::AddressBook address_book;
-            boost::any &input_data = this->data_dic["input_data"];
-
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
 
-            for (bp::ptree::iterator person
-                    = boost::any_cast<bp::ptree>(input_data).begin();
-                person != boost::any_cast<bp::ptree>(input_data).end();
+            const boost::any &input_data = this->data_dic["input_data"];
+            const bp::ptree &pt = boost::any_cast<bp::ptree>(input_data);
+
+            for (bp::ptree::const_iterator person
+                    = pt.get_child("person").begin();
+                person != pt.get_child("person").end();
                 ++person)
             {
                 BPro::Person *one_person = address_book.add_person();
@@ -51,7 +53,7 @@ namespace Benchmark {
                     one_person->set_email(
                             person->second.get<std::string>("email"));
                 
-                for (bp::ptree::iterator phone
+                for (bp::ptree::const_iterator phone
                         = person->second.get_child("phone").begin();
                     phone != person->second.get_child("phone").end();
                     ++phone)
@@ -119,11 +121,12 @@ namespace Benchmark {
             boost::shared_ptr<att::TMemoryBuffer>
                 mem_buf(new att::TMemoryBuffer);
             atp::TCompactProtocol bin_proto(mem_buf);
-            boost::any &input_data = this->data_dic["input_data"];
+            const boost::any &input_data = this->data_dic["input_data"];
+            const bp::ptree &pt = boost::any_cast<bp::ptree>(input_data);
 
-            for (bp::ptree::iterator person
-                    = boost::any_cast<bp::ptree>(input_data).begin();
-                person != boost::any_cast<bp::ptree>(input_data).end();
+            for (bp::ptree::const_iterator person
+                    = pt.get_child("person").begin();
+                person != pt.get_child("person").end();
                 ++person)
             {
                 BThr::Person one_person;
@@ -136,7 +139,7 @@ namespace Benchmark {
                     one_person.__set_email(
                             person->second.get<std::string>("email"));
                 
-                for (bp::ptree::iterator phone
+                for (bp::ptree::const_iterator phone
                         = person->second.get_child("phone").begin();
                     phone != person->second.get_child("phone").end();
                     ++phone)
@@ -214,11 +217,12 @@ namespace Benchmark {
 
             bp::ptree person_list;
             se_dict.put_child("person", person_list);
-            boost::any &input_data = this->data_dic["input_data"];
+            const boost::any &input_data = this->data_dic["input_data"];
+            const bp::ptree &pt = boost::any_cast<bp::ptree>(input_data);
 
-            for (bp::ptree::iterator person
-                    = boost::any_cast<bp::ptree>(input_data).begin();
-                person != boost::any_cast<bp::ptree>(input_data).end();
+            for (bp::ptree::const_iterator person
+                    = pt.get_child("person").begin();
+                person != pt.get_child("person").end();
                 ++person)
             {
                 bp::ptree person_dict;
@@ -233,7 +237,7 @@ namespace Benchmark {
                 bp::ptree phone_list;
                 person_dict.put_child("phone", phone_list);
 
-                for (bp::ptree::iterator phone
+                for (bp::ptree::const_iterator phone
                         = person->second.get_child("phone").begin();
                     phone != person->second.get_child("phone").end();
                     ++phone)
