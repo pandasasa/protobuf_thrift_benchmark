@@ -3,6 +3,8 @@
 *.pickle
 *.swp
 data/*.json
+*.o
+benchmark
 
 # Serialized File
 *.serialized

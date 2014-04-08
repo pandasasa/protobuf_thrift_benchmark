@@ -1,38 +1,35 @@
-benchmark: 
-	g++ -o benchmark -lboost_system -lboost_filesystem -lthrift -lprotobuf ./benchmark.cpp ./address_book_protobuf.pb.o ./address_book_thrift_constants.o ./address_book_thrift_types.o
+# Variable definition
+CC = g++
 
-benchmark: benchmark.o address_book.o basic_lib.o \
-	address_book_protobuf.pb.o address_book_thrift_constants.o \
-	address_book_thrift_types.o
-	gcc -o benchmark benchmark.o address_book.o basic_lib.o \
-		address_book_protobuf.pb.o address_book_thrift_constants.o \
-		address_book_thrift_types.o
+final_target = benchmark
+link_lib = -lboost_system -lboost_filesystem -lthrift -lprotobuf
+main_file = benchmark.cpp
 
-benchmark.o: benchmark.cpp lib/cpp/address_book.hpp lib/cpp/basic_lib.hpp \
-	lib/cpp/address_book_protobuf.pb.h lib/cpp/address_book_thrift_types.h
-	gcc -c -lboost_system -lboost_file_system benchmark.cpp
+ap = address_book_protobuf.pb.o
+atc = address_book_thrift_constants.o
+att = address_book_thrift_types.o
+o_file = $(ap) $(atc) $(att)
 
-address_book.o: lib/cpp/address_book.hpp lib/cpp/basic_lib.hpp \
-	lib/cpp/address_book_protobuf.pb.h lib/cpp/address_book_thrift_types.h
-	gcc -o address_book.o -c lib/cpp/address_book.hpp -lthrift -lprotobuf
+ap_main = lib/cpp/address_book_protobuf.pb.cc
+ap_h = lib/cpp/address_book_protobuf.pb.h
+atc_main = lib/cpp/address_book_thrift_constants.cpp
+atc_h = lib/cpp/address_book_thrift_constants.h
+att_main = lib/cpp/address_book_thrift_types.cpp
+att_h = lib/cpp/address_book_thrift_types.h
 
-basic_lib.o: lib/cpp/basic_lib.hpp
-	gcc -o basic_lib.o -c lib/cpp/basic_lib.hpp
+benchmark: ${o_file}
+	$(CC) -o $(final_target) $(link_lib) $(main_file) $(o_file)
+	rm $(o_file)
 
-address_book_protobuf.pb.o: lib/cpp/address_book_protobuf.pb.cc \
-	lib/cpp/address_book_protobuf.pb.h
-	gcc -o address_book_protobuf.pb.o -c lib/cpp/address_book_protobuf.pb.cc
+$(ap): $(ap_main) $(ap_h)
+	$(CC) -o $(ap) -c $(ap_main)
 
-address_book_thrift_constants.o: lib/cpp/address_book_thrift_constants.cpp \
-	lib/cpp/address_book_thrift_constants.h lib/cpp/address_book_thrift_types.h
-	gcc -o address_book_thrift_constants.o -c lib/cpp/address_book_thrift_constants.cpp
+$(atc): $(atc_main) $(atc_h) $(att_h)
+	$(CC) -o $(atc) -c $(atc_main)
 
-address_book_thrift_types.o: lib/cpp/address_book_thrift_types.cpp \
-	lib/cpp/address_book_thrift_types.h
-	gcc -o address_book_thrift_types.o -c lib/cpp/address_book_thrift_types.cpp
+$(att): $(att_main) $(att_h)
+	$(CC) -o $(att) -c $(att_main)
 
 clean:
-	rm benchmark: benchmark.o lib/cpp/address_book.o lib/cpp/basic_lib.o \
-		lib/cpp/address_book_protobuf.pb.o \
-		lib/cpp/address_book_thrift_constants.o \
-		lib/cpp/address_book_thrift_types.o
+	rm $(final_target)
+
