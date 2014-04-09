@@ -1,14 +1,15 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
-
-#include <string>
 #include <list>
+#include <vector>
 
+#include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-#include <boost/filesystem.hpp>
+
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/string.hpp>
 
 #include "lib/cpp/address_book.hpp"
 
@@ -51,7 +52,7 @@ void init_data(const string &data_dir, Benchmark::BenchmarkDict &benchmark_dict)
             ++filename_iter)
         {
             Benchmark::FileLevel &file_dict = benchmark_dict[*tool_iter];
-            file_dict[filename_iter->substr(2)] = Benchmark::KeyLevel();
+            file_dict[filename_iter->substr(7)] = Benchmark::KeyLevel();
 
             for (list<string>::const_iterator key_iter
                     = bd.get_key_list().begin();
@@ -59,11 +60,11 @@ void init_data(const string &data_dir, Benchmark::BenchmarkDict &benchmark_dict)
                 ++key_iter)
             {
                 Benchmark::KeyLevel &key_dict
-                    = file_dict[filename_iter->substr(2)];
+                    = file_dict[filename_iter->substr(7)];
 
                 if (*key_iter == "input_file_path")
                     key_dict[*key_iter]
-                        = data_dir + filename_iter->substr(2);
+                        = data_dir + filename_iter->substr(7);
                 else if (*key_iter == "input_data")
                 {
                     ifstream fin(filename_iter->c_str());
@@ -104,37 +105,65 @@ void test_go(Benchmark::BenchmarkDict &data_dict)
             Benchmark::AddressBook ins(tool_iter->first, data_info);
             ins.serialization();
 
-            /*string output_path = "./output/cpp/" + tool_iter->first + "/"
+            string output_path = "./output/cpp/" + tool_iter->first + "/"
                 + file_iter->first.substr(0, file_iter->first.length() - 5)
                 + ".serialized";
 
             ofstream output_file(output_path.c_str());
+            output_file << boost::any_cast<string>(data_info["seed_file_str"]);
             output_file.close();
 
             data_info["seed_file_path"] = output_path;
             data_info["seed_file_size"]
                 = boost::any_cast<string>(data_info["seed_file_str"]).length();
 
-            ins.deserialization();*/
-
-            data_info["input_data"] = 0;
-            data_info["seed_file_str"] = 0;
+            ins.deserialization();
         }
     }
 }
 
 
 void result_dict_output(const string &result_file_path,
-        const Benchmark::BenchmarkDict &result_dict)
+        Benchmark::BenchmarkDict &result_dict)
 {
-    /*ofstream serialized_file(result_file_path);
+    using namespace Benchmark;
+    using namespace boost;
 
-    boost::archive::text_oarchive se(serialized_file);
+    Serializable se_obj;
+    SeToolLevel &se_tool_level = se_obj.se_obj;
+    
+    for (BenchmarkDict::iterator tool_iter = result_dict.begin();
+        tool_iter != result_dict.end();
+        ++tool_iter)
+    {
+        SeFileLevel se_file_level;
 
-    Benchmark::Serialized serialized_obj(result_dict);
+        for (FileLevel::iterator file_iter = tool_iter->second.begin();
+            file_iter != tool_iter->second.end();
+            ++file_iter)
+        {
+            SeKeyLevel se_key_level;
 
-    se << serialized_obj;
-    serialized_file.close();*/
+            se_key_level["se_time"]
+                = any_cast<long>(file_iter->second["se_time"]);
+            se_key_level["dese_time"]
+                = any_cast<long>(file_iter->second["dese_time"]);
+            se_key_level["seed_file_size"]
+                = any_cast<string>(file_iter->second["seed_file_str"]).length();
+
+            se_file_level[file_iter->first] = se_key_level;
+        }
+
+        se_tool_level[tool_iter->first] = se_file_level;
+    }
+
+
+    ofstream serialized_file(result_file_path.c_str());
+    archive::text_oarchive oa(serialized_file);
+
+    oa << se_obj;
+
+    serialized_file.close();
 }
 
 

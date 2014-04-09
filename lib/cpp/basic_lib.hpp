@@ -6,13 +6,31 @@
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/string.hpp>
 
-
 namespace Benchmark {
 
     typedef std::map<std::string, boost::any> KeyLevel;
     typedef std::map<std::string, KeyLevel> FileLevel;
     typedef std::map<std::string, FileLevel> ToolLevel;
     typedef ToolLevel BenchmarkDict;
+    
+    typedef std::map<std::string, long> SeKeyLevel;
+    typedef std::map<std::string, SeKeyLevel> SeFileLevel;
+    typedef std::map<std::string, SeFileLevel> SeToolLevel;
+
+
+    class Serializable
+    {
+    public:
+        SeToolLevel se_obj;
+
+        friend class boost::serialization::access;
+
+        template <class Archive>
+        void serialize(Archive &ar, const unsigned int version)
+        {
+            ar & se_obj;
+        }
+    };
 
 
     class BasicData
@@ -58,23 +76,6 @@ namespace Benchmark {
             lang_list, rm_postfix_list;
     };
 
-    class Serialized
-    {
-        friend class boost::serialization::access;
-    public:
-        Serialized(const BenchmarkDict &dict)
-            { this->dict = dict; }
-
-        const BenchmarkDict &get_dict() const
-            { return dict; }
-
-    private:
-        BenchmarkDict dict;
-
-        template<class Archive>
-        void serialize(Archive &ar, const unsigned int version)
-            { ar & dict; }
-    };
 
     class Scenario
     {
@@ -95,8 +96,9 @@ namespace Benchmark {
                     se_time = this->se_thrift();
                 else
                     se_time = this->se_json();
-
-                if (final_time == -1 || final_time > se_time)
+                
+                if ((final_time == -1 && se_time > 0)
+                        || (final_time > se_time && se_time > 0))
                     final_time = se_time;
                 else
                     continue;
@@ -119,7 +121,8 @@ namespace Benchmark {
                 else
                     de_time = this->de_json();
 
-                if (final_time == -1 || final_time > de_time)
+                if ((final_time == -1 && de_time > 0)
+                        || (final_time > de_time && de_time > 0))
                     final_time = de_time;
                 else
                     continue;

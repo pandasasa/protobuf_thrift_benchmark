@@ -4,7 +4,8 @@ CC = g++
 DEBUG = -g
 
 final_target = benchmark.exe
-link_lib = -lboost_system -lboost_filesystem -lthrift -lprotobuf
+link_lib = -lboost_system -lboost_filesystem -lboost_serialization \
+		   -lthrift -lprotobuf
 main_file = benchmark.cpp
 
 ap = address_book_protobuf.pb.o
@@ -19,6 +20,8 @@ atc_h = lib/cpp/address_book_thrift_constants.h
 att_main = lib/cpp/address_book_thrift_types.cpp
 att_h = lib/cpp/address_book_thrift_types.h
 
+clean_file = $(final_target) $(o_file)
+
 $(final_target): ${o_file}
 	$(CC) $(DEBUG) -o $(final_target) $(link_lib) $(main_file) $(o_file)
 
@@ -32,5 +35,6 @@ $(att): $(att_main) $(att_h)
 	$(CC) $(DEBUG) -o $(att) -c $(att_main)
 
 clean:
-	rm $(final_target) $(o_file)
+	touch $(clean_file)
+	rm $(clean_file)
 

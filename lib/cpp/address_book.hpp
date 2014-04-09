@@ -4,8 +4,7 @@
 #include <iostream>
 #include <ctime>
 
-#include <list>
-#include <string>
+#include <boost/serialization/string.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
@@ -216,7 +215,6 @@ namespace Benchmark {
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
 
             bp::ptree person_list;
-            se_dict.put_child("person", person_list);
             const boost::any &input_data = this->data_dic["input_data"];
             const bp::ptree &pt = boost::any_cast<bp::ptree>(input_data);
 
@@ -226,16 +224,15 @@ namespace Benchmark {
                 ++person)
             {
                 bp::ptree person_dict;
-                person_dict.add("name",
+                person_dict.put("name",
                         person->second.get<std::string>("name"));
-                person_dict.add("id", person->second.get<int>("id"));
+                person_dict.put("id", person->second.get<int>("id"));
 
                 if (person->second.get<std::string>("email") != "")
-                    person_dict.add("email",
+                    person_dict.put("email",
                             person->second.get<std::string>("email"));
 
                 bp::ptree phone_list;
-                person_dict.put_child("phone", phone_list);
 
                 for (bp::ptree::const_iterator phone
                         = person->second.get_child("phone").begin();
@@ -243,20 +240,23 @@ namespace Benchmark {
                     ++phone)
                 {
                     bp::ptree phone_dict;
-                    phone_dict.add("number",
+                    phone_dict.put("number",
                             phone->second.get<std::string>("number"));
                     
                     if (phone->second.get<std::string>("type") == "")
-                        phone_dict.add("type", "HOME");
+                        phone_dict.put("type", "HOME");
                     else
-                        phone_dict.add("type",
+                        phone_dict.put("type",
                                 phone->second.get<std::string>("type"));
 
                     phone_list.push_back(make_pair("", phone_dict));
                 }
 
+                person_dict.put_child("phone", phone_list);
                 person_list.push_back(make_pair("", person_dict));
             }
+
+            se_dict.put_child("person", person_list);
 
             std::stringstream json_ss;
             bp::json_parser::write_json(json_ss, se_dict);

@@ -5,20 +5,7 @@ import os
 import compileall
 
 from data import data_generator
-
-
-def clean_workspace(rm_postfix_list):
-    '''
-    Clean the workspace before running benchmark.
-    '''
-
-    def walk_func(arg, dirname, fnames):
-        for name in fnames:
-            for rm in rm_postfix_list:
-                if name[-len(rm):] == rm:
-                    os.remove(os.path.join(dirname, name))
-
-    os.path.walk('./', walk_func, None)
+import clean
 
 
 def data_generating(template_path, output_path, config_dict):
@@ -39,7 +26,7 @@ if __name__ == '__main__':
 
     # Cleaning the workspace
     print 'Cleaning Workspace'
-    clean_workspace(rm_postfix_list)
+    clean.clean_workspace(rm_postfix_list)
 
     # Testing Data Generating
     template_path = './lib/template/address_book_json.json'
@@ -55,10 +42,23 @@ if __name__ == '__main__':
 
     # Compiling Python file
     print 'Compiling Python Benchmark'
-    # compileall.compile_dir('./', quiet=True)
+    compileall.compile_dir('./', quiet=True)
 
     # Compiling C++ file
     print 'Compiling C++ Benchmark'
+    os.system('make')
 
     # Compiling Java file
-    print 'Compiling Java Benchmark'
+    print 'Compiling Java Benchmark(NOT FINISHED YET)'
+
+    # Running Python Benchmark
+    print 'Running Python Benchmark'
+    os.system('python ./benchmark.py')
+
+    # Running C++ Benchmark
+    print 'Running C++ Benchmark'
+    os.system('./benchmark.exe')
+
+    # Running Java Benchmark
+    print 'Running Java Benchmark(NOT FINISHED YET)'
+
