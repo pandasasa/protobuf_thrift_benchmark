@@ -41,15 +41,18 @@ class DataGenerator:
             self._x_init = config_dict['x_init']
             self._x_loop = config_dict['x_loop']
             self._y_loop = config_dict['y_loop']
-            self._z_loop = config_dict['z_loop']
             self._x_step = config_dict['x_step']
             self._y_step = config_dict['y_step']
-            self._z_step = config_dict['z_step']
 
-        self._data_box = [[[]]]
+        if self._x_step > self._x_loop \
+            or self._y_step > self._x_loop:
+            print 'ERROR! STEP IS LARGER THAN LOOP NUM.'
+            quit()
+
+        self._data_box = [[]]
         # _data_box will store all the generated data
         # and the data in box will output to the data file.
-        # Structure: [x[y[z]]]
+        # Structure: [x[y]]
 
 
     def x_gen(self):
@@ -78,7 +81,7 @@ class DataGenerator:
         for length in xrange(1, self._x_loop + 1, self._x_step):
             obj_dict = copy.deepcopy(self._temp_dict)
             ext_dict(obj_dict, length)
-            self._data_box[0][0].append(obj_dict)
+            self._data_box[0].append(obj_dict)
 
 
     def y_gen(self):
@@ -99,28 +102,9 @@ class DataGenerator:
                     pass
 
         for repeat in xrange(1, self._y_loop, self._y_step):
-            obj_list = copy.deepcopy(self._data_box[0][0])
+            obj_list = copy.deepcopy(self._data_box[0])
             for item in obj_list:
                 ext_list(item, repeat)
-            self._data_box[0].append(obj_list)
-
-
-    def z_gen(self):
-        '''
-        Expend the number of keys in first level of template.
-        z means the number of keys.
-        '''
-
-        for repeat in xrange(1, self._z_loop, self._z_step):
-            obj_list = copy.deepcopy(self._data_box[0])
-            for y in xrange(self._y_loop):
-                for x in xrange(self._x_loop):
-                    key_list = obj_list[y][x].keys()
-                    for key in key_list:
-                        for i in xrange(repeat):
-                            obj_list[y][x][key + str(repeat)] = \
-                                    copy.copy(obj_list[y][x][key])
-
             self._data_box.append(obj_list)
 
 
@@ -135,16 +119,14 @@ class DataGenerator:
 
         print 'Generating repeat value'
         self.y_gen()
-        self.z_gen()
 
         print 'Output to file'
-        for z in xrange(self._z_loop):
-            for y in xrange(self._y_loop):
-                for x in xrange(self._x_loop):
-                    file_name = '.'.join([str(x), str(y), str(z)]) + '.json'
-                    data_file = open(self._output_path + file_name, 'w')
-                    json.dump(self._data_box[z][y][x], data_file)
-                    data_file.close()
+        for y in xrange(self._y_loop):
+            for x in xrange(self._x_loop):
+                file_name = '.'.join([str(x), str(y)]) + '.json'
+                data_file = open(self._output_path + file_name, 'w')
+                json.dump(self._data_box[y][x], data_file)
+                data_file.close()
 
 
 def del_org(dir, postfix):

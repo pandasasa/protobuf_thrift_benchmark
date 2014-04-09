@@ -24,4 +24,5 @@ if __name__ == '__main__':
 
     clean_workspace(rm_postfix_list)
     print 'DONE!'
+    os.system("ls -l --color=auto");
 
