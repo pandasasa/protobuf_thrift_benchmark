@@ -92,7 +92,7 @@ void test_go(Benchmark::BenchmarkDict &data_dict)
         tool_iter != data_dict.end();
         ++tool_iter)
     {
-        cout << "  Tool: " << tool_iter->first << endl;
+        cout << "    Tool: " << tool_iter->first << endl;
 
         Benchmark::FileLevel &file_level = data_dict[tool_iter->first];
 
@@ -172,16 +172,16 @@ int main(int argc, char *argv[])
     Benchmark::BasicData bd;
     
     // Initializing information dictionary by data in path data_dir
-    cout << "Init. Data\n";
+    cout << "  Init. Data\n";
     Benchmark::BenchmarkDict benchmark_dict;
     init_data(bd.get_input_data_dir(), benchmark_dict);
     
     // Running Benchmark
-    cout << "Running Benchmark\n";
+    cout << "  Running Benchmark\n";
     test_go(benchmark_dict);
     
     // Processing the result and generating statistic results
-    cout << "Saving Result to boost::serialization.\n";
+    cout << "  Saving Result to boost::serialization.\n";
     result_dict_output(bd.get_result_file_path(), benchmark_dict);
 
     exit(0);

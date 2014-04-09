@@ -64,7 +64,7 @@ def test_go(data_dict):
     '''
 
     for tool in data_dict.keys():
-        print '  Tool: ' + tool
+        print '    Tool: ' + tool
         for file_name in data_dict[tool].keys():
             data_info = data_dict[tool][file_name]
 
@@ -109,14 +109,14 @@ def result_dict_output(result_file_path, result_dict):
 
 if __name__ == '__main__':
     # Initializing information dictionary by data in path data_dir
-    print 'Init. Data'
+    print '  Init. Data'
     benchmark_dict = dict()
     init_data(basic_lib.input_data_dir, benchmark_dict)
 
     # Running Benchmark
-    print 'Running Benchmark'
+    print '  Running Benchmark'
     test_go(benchmark_dict)
 
     # Processing the result and generating statistic results
-    print 'Saving Result to Pickle.'
+    print '  Saving Result to Pickle.'
     result_dict_output(basic_lib.result_file_path, benchmark_dict)
