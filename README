@@ -2,3 +2,20 @@ protobuf_thrift_benchmark
 =========================
 
 Protobuf Thrift Performance Benchmark
+
+To run the benchmark, please make sure the related package has been installed.
+
+change the working directory to the root of this folder, and run:
+
+    python ./go.py
+
+If you want to change the data amount, please modify the ./gen.config, and 
+
+make sure that the "step" value is smaller than "loop" value.
+
+If you want to clean the work space, please run:
+
+    python ./clean.py
+
+Actually, everytime you run go.py, the workspace can be cleaned.
+

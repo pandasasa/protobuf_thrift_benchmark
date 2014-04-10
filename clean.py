@@ -27,7 +27,9 @@ if __name__ == '__main__':
 
     clean_workspace(curr_path, rm_postfix_list)
     clean_workspace(data_path, rm_data_postfix_list)
-    print 'DONE!'
+    print 'Done'
+    print 'Top Directory.'
     os.system("ls -l --color=auto")
+    print 'Testing Data Directory'
     os.system("ls -l --color=auto ./data/")
 

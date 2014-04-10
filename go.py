@@ -54,9 +54,6 @@ if __name__ == '__main__':
     print_title('Compiling C++ Benchmark')
     os.system('make')
 
-    # Compiling Java file
-    print_title('Compiling Java Benchmark(NOT FINISHED YET)')
-
     # Running Python Benchmark
     print_title('Running Python Benchmark')
     os.system('python ./benchmark.py')
@@ -64,7 +61,4 @@ if __name__ == '__main__':
     # Running C++ Benchmark
     print_title('Running C++ Benchmark')
     os.system('./benchmark.exe')
-
-    # Running Java Benchmark
-    print_title('Running Java Benchmark(NOT FINISHED YET)')
 

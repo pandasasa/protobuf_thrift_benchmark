@@ -22,7 +22,7 @@ se_data_key_list = ['input_file_path', 'input_data', 'se_time', \
 result_file_path = './result/python/original_dict.pickle'
 
 # The list of languages
-lang_list = ['python', 'java', 'cpp']
+lang_list = ['python', 'cpp']
 
 # The serialized file output path.
 seed_file_path = './output/'
