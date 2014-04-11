@@ -19,3 +19,7 @@ If you want to clean the work space, please run:
 
 Actually, everytime you run go.py, the workspace can be cleaned.
 
+I have given up the Java Benchmark, because it has been fully tested by other
+
+friends, e.g. https://github.com/eishay/jvm-serializers
+
