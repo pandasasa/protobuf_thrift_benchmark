@@ -42,18 +42,15 @@ namespace Benchmark {
             this->result_file_path = "./result/cpp/original_dict.serialization";
             this->seed_file_path = "./output/";
 
-            std::string tool[3] = {"protobuf", "json", "thrift"};
-            std::string data_key[7] = {"input_file_path", "input_data",
+            std::string tool[] = {"protobuf", "json", "thrift_compact", "thrift_binary"};
+            std::string data_key[] = {"input_file_path", "input_data",
                 "se_time", "seed_file_str", "seed_file_path", "seed_file_size",
                 "dese_time"};
-            std::string lang[3] = {"python", "java", "cpp"};
 
             this->se_tool_list
-                = std::list<std::string>(tool, tool + 3);
+                = std::list<std::string>(tool, tool + 4);
             this->se_data_key_list
                 = std::list<std::string>(data_key, data_key + 7);
-            this->lang_list
-                = std::list<std::string>(lang, lang + 3);
         }
 
         const std::string &get_input_data_dir() const
@@ -92,8 +89,10 @@ namespace Benchmark {
             {
                 if (this->tool == "protobuf")
                     se_time = this->se_protobuf();
-                else if (this->tool == "thrift")
-                    se_time = this->se_thrift();
+                else if (this->tool == "thrift_compact")
+                    se_time = this->se_thrift_compact();
+                else if (this->tool == "thrift_binary")
+                    se_time = this->se_thrift_binary();
                 else
                     se_time = this->se_json();
                 
@@ -116,8 +115,10 @@ namespace Benchmark {
             {
                 if (this->tool == "protobuf")
                     de_time = this->de_protobuf();
-                else if (this->tool == "thrift")
-                    de_time = this->de_thrift();
+                else if (this->tool == "thrift_compact")
+                    de_time = this->de_thrift_compact();
+                else if (this->tool == "thrift_binary")
+                    de_time = this->de_thrift_binary();
                 else
                     de_time = this->de_json();
 
@@ -132,9 +133,11 @@ namespace Benchmark {
         }
 
         virtual long se_protobuf() = 0;
-        virtual long se_thrift() = 0;
+        virtual long se_thrift_compact() = 0;
+        virtual long se_thrift_binary() = 0;
         virtual long de_protobuf() = 0;
-        virtual long de_thrift() = 0;
+        virtual long de_thrift_compact() = 0;
+        virtual long de_thrift_binary() = 0;
         virtual long se_json() = 0;
         virtual long de_json() = 0;
 

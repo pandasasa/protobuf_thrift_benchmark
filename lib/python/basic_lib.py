@@ -11,7 +11,7 @@ import json
 input_data_dir = './data/'
 
 # A list of serialization tools name.
-se_tool_list = ['protobuf', 'json', 'thrift']
+se_tool_list = ['protobuf', 'json', 'thrift_compact', 'thrift_binary']
 
 # A list of serialization related keys of dictionary.
 se_data_key_list = ['input_file_path', 'input_data', 'se_time', \
@@ -20,9 +20,6 @@ se_data_key_list = ['input_file_path', 'input_data', 'se_time', \
 
 # The dictionary's pickle file path.
 result_file_path = './result/python/original_dict.pickle'
-
-# The list of languages
-lang_list = ['python', 'cpp']
 
 # The serialized file output path.
 seed_file_path = './output/'
@@ -62,8 +59,10 @@ class Scenario(object):
         for i in xrange(self._repeat_time):
             if self._tool == 'protobuf':
                 se_time = self.se_protobuf()
-            elif self._tool == 'thrift':
-                se_time = self.se_thrift()
+            elif self._tool == 'thrift_compact':
+                se_time = self.se_thrift_compact()
+            elif self._tool == 'thrift_binary':
+                se_time = self.se_thrift_binary()
             else:
                 se_time = self.se_json()
 
@@ -92,8 +91,10 @@ class Scenario(object):
         for i in xrange(self._repeat_time):
             if self._tool == 'protobuf':
                 de_time = self.de_protobuf()
-            elif self._tool == 'thrift':
-                de_time = self.de_thrift()
+            elif self._tool == 'thrift_compact':
+                de_time = self.de_thrift_compact()
+            elif self._tool == 'thrift_binary':
+                de_time = self.de_thrift_binary()
             else:
                 de_time = self.de_json()
 
@@ -107,11 +108,15 @@ class Scenario(object):
 
     def se_protobuf(self):
         pass
-    def se_thrift(self):
+    def se_thrift_compact(self):
+        pass
+    def se_thrift_binary(self):
         pass
     def de_protobuf(self):
         pass
-    def de_thrift(self):
+    def de_thrift_compact(self):
+        pass
+    def de_thrift_binary(self):
         pass
 
 

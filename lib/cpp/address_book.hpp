@@ -10,6 +10,7 @@
 
 #include <thrift/transport/TBufferTransports.h>
 #include <thrift/protocol/TCompactProtocol.h>
+#include <thrift/protocol/TBinaryProtocol.h>
 
 #include "basic_lib.hpp"
 #include "address_book_protobuf.pb.h"
@@ -105,7 +106,7 @@ namespace Benchmark {
         }
 
 
-        long se_thrift()
+        long se_thrift_compact()
         {
             namespace bp = boost::property_tree;
             namespace BThr = BenchmarkThrift;
@@ -175,7 +176,7 @@ namespace Benchmark {
         }
 
 
-        long de_thrift()
+        long de_thrift_compact()
         {
             BenchmarkThrift::AddressBook address_book;
             namespace atp = apache::thrift::protocol;
@@ -193,6 +194,106 @@ namespace Benchmark {
             boost::shared_ptr<att::TMemoryBuffer>
                 mem_buf(new att::TMemoryBuffer(buf, std_str.length()));
             atp::TCompactProtocol bin_proto(mem_buf);
+            
+            atp::TProtocol *bin_proto_ptr = &bin_proto;
+            address_book.read(bin_proto_ptr);
+
+            delete [] buf;
+
+            clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
+
+            return end_time.tv_nsec - start_time.tv_nsec;
+        }
+
+
+        long se_thrift_binary()
+        {
+            namespace bp = boost::property_tree;
+            namespace BThr = BenchmarkThrift;
+            namespace atp = apache::thrift::protocol;
+            namespace att = apache::thrift::transport;
+
+            timespec start_time, end_time;
+            BThr::AddressBook address_book;
+
+            clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
+
+            boost::shared_ptr<att::TMemoryBuffer>
+                mem_buf(new att::TMemoryBuffer);
+            atp::TBinaryProtocol bin_proto(mem_buf);
+            const boost::any &input_data = this->data_dic["input_data"];
+            const bp::ptree &pt = boost::any_cast<bp::ptree>(input_data);
+
+            for (bp::ptree::const_iterator person
+                    = pt.get_child("person").begin();
+                person != pt.get_child("person").end();
+                ++person)
+            {
+                BThr::Person one_person;
+
+                one_person.__set_name(person->second.get<std::string>("name"));
+                
+                one_person.__set_id(person->second.get<int>("id"));
+                
+                if (person->second.get<std::string>("email") == "")
+                    one_person.__set_email(
+                            person->second.get<std::string>("email"));
+                
+                for (bp::ptree::const_iterator phone
+                        = person->second.get_child("phone").begin();
+                    phone != person->second.get_child("phone").end();
+                    ++phone)
+                {
+                    BThr::PhoneNumber one_phone;
+                    
+                    one_phone.__set_number(
+                            phone->second.get<std::string>("number"));
+                    
+                    if (phone->second.get<std::string>("type") == "HOME"
+                        || phone->second.get<std::string>("type") == "")
+                        one_phone.__set_type(BThr::PhoneType::HOME);
+                    else if (phone->second.get<std::string>("type") == "MOBILE")
+                        one_phone.__set_type(BThr::PhoneType::MOBILE);
+                    else if (phone->second.get<std::string>("type") == "WORK")
+                        one_phone.__set_type(BThr::PhoneType::WORK);
+                    else
+                        one_phone.__set_type(BThr::PhoneType::OTHER);
+                    
+                    one_person.phone.push_back(one_phone);
+                }
+                
+                address_book.person.push_back(one_person);
+            }
+            
+            atp::TProtocol *bin_proto_ptr = &bin_proto;
+            address_book.write(bin_proto_ptr);
+
+            clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
+
+            this->data_dic["seed_file_str"] = mem_buf->getBufferAsString();
+
+            return end_time.tv_nsec - start_time.tv_nsec;
+        }
+
+
+        long de_thrift_binary()
+        {
+            BenchmarkThrift::AddressBook address_book;
+            namespace atp = apache::thrift::protocol;
+            namespace att = apache::thrift::transport;
+
+            timespec start_time, end_time;
+
+            clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
+            
+            boost::any &str = this->data_dic["seed_file_str"];
+            std::string std_str = boost::any_cast<std::string>(str);
+            uint8_t *buf = new uint8_t [std_str.length()];
+            memcpy(buf, std_str.c_str(), std_str.length());
+
+            boost::shared_ptr<att::TMemoryBuffer>
+                mem_buf(new att::TMemoryBuffer(buf, std_str.length()));
+            atp::TBinaryProtocol bin_proto(mem_buf);
             
             atp::TProtocol *bin_proto_ptr = &bin_proto;
             address_book.read(bin_proto_ptr);
