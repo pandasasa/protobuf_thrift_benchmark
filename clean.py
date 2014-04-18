@@ -20,7 +20,8 @@ def clean_workspace(clean_path, rm_postfix_list):
 
 if __name__ == '__main__':
     # The filename postfix of the files to be remove.
-    rm_postfix_list = ['.pyc', '.pyo', '.pyd', '.serialized', '.o', '.exe']
+    rm_postfix_list = ['.pyc', '.pyo', '.pyd', '.serialized',
+            '.o', '.exe', '.result']
     rm_data_postfix_list = ['.json']
     curr_path = './'
     data_path = './data/'

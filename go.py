@@ -3,9 +3,10 @@
 
 import os
 import compileall
+import clean
 
 from data import data_generator
-import clean
+from result.python import analyse
 
 
 def data_generating(template_path, output_path, config_dict):
@@ -61,4 +62,17 @@ if __name__ == '__main__':
     # Running C++ Benchmark
     print_title('Running C++ Benchmark')
     os.system('./benchmark.exe')
+
+    # Outputing Python Result
+    print_title('Outputing Python Result')
+    
+    pickle_file_path = './result/python/original_dict.pickle'
+    config_file_path = './gen.config'
+    output_path = './result/python/'
+
+    ana = analyse.Analyser(pickle_file_path, config_file_path, output_path)
+    ana.default_write()
+
+    # Outputing C++ Result
+    print_title('Outputing C++ Result')
 

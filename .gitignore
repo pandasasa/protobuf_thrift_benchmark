@@ -10,3 +10,5 @@ data/*.json
 *.serialized
 *.serialization
 
+# Result File
+*.result
