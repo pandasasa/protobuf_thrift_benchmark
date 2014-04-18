@@ -9,6 +9,7 @@ import json
 import pickle
 
 from lib.python import *
+from result.python import analyse
 
 
 def init_data(data_dir, benchmark_dict):
@@ -120,3 +121,14 @@ if __name__ == '__main__':
     # Processing the result and generating statistic results
     print '  Saving Result to Pickle.'
     result_dict_output(basic_lib.result_file_path, benchmark_dict)
+
+    # Outputing result to txt files
+    print '  Outputing result to txt files.'
+
+    pickle_file_path = './result/python/original_dict.pickle'
+    config_file_path = './gen.config'
+    output_path = './result/python/'
+
+    ana = analyse.Analyser(pickle_file_path, config_file_path, output_path)
+    ana.default_write()
+

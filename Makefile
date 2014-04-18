@@ -1,7 +1,7 @@
 # Variable definition
 CC = g++
 
-DEBUG = -g
+DEBUG =
 
 final_target = benchmark.exe
 link_lib = -lboost_system -lboost_filesystem -lboost_serialization \

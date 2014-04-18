@@ -12,6 +12,7 @@
 #include <boost/serialization/string.hpp>
 
 #include "lib/cpp/address_book.hpp"
+#include "result/cpp/analyse.hpp"
 
 
 using namespace std;
@@ -123,7 +124,7 @@ void test_go(Benchmark::BenchmarkDict &data_dict)
 }
 
 
-void result_dict_output(const string &result_file_path,
+const Benchmark::SeToolLevel result_dict_output(const string &result_file_path,
         Benchmark::BenchmarkDict &result_dict)
 {
     using namespace Benchmark;
@@ -164,6 +165,8 @@ void result_dict_output(const string &result_file_path,
     oa << se_obj;
 
     serialized_file.close();
+
+    return se_tool_level;
 }
 
 
@@ -182,7 +185,17 @@ int main(int argc, char *argv[])
     
     // Processing the result and generating statistic results
     cout << "  Saving Result to boost::serialization.\n";
-    result_dict_output(bd.get_result_file_path(), benchmark_dict);
+    Benchmark::SeToolLevel se_dict
+        = result_dict_output(bd.get_result_file_path(), benchmark_dict);
+
+    // Outputing result to txt files
+    cout << "  Outputing result to txt files.\n";
+
+    string config_file_path("./gen.config");
+    string output_path("./result/cpp/");
+
+    Analyser analyser(se_dict, config_file_path, output_path);
+    analyser.default_write();
 
     exit(0);
 }
