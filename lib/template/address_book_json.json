@@ -1,15 +1,17 @@
 {
-    "person" : [
+    "person" :
+    [
+        {
+            "name" : "",
+            "id" : 0,
+            "email" : "",
+            "phone" :
+            [
                 {
-                    "name" : "",
-                    "id" : 0,
-                    "email" : "",
-                    "phone" : [
-                                {
-                                    "number" : "",
-                                    "type" : "HOME"
-                                }
-                    ]
+                    "number" : "",
+                    "type" : "HOME"
                 }
+            ]
+        }
     ]
 }
