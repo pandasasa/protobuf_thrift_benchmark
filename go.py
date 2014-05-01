@@ -17,8 +17,10 @@ def data_generating(template_path, output_path, config_dict):
     print '  Cleaning Old Testing Data'
     data_generator.del_org('./data/', '.json')
     gen = data_generator.DataGenerator(template_path, output_path, config_dict)
+
     print '  Generating'
     gen.gen()
+    del gen
 
 def print_title(title):
     split_line = '============================================================'

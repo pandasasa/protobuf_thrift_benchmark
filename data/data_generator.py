@@ -153,7 +153,7 @@ def parse_config(file_obj):
 
 
 if __name__ == '__main__':
-    template_path = '../lib/template/address_book.json'
+    template_path = '../lib/template/address_book_json.json'
     output_path = './'
 
     config_file = open('../gen.config', 'r')
