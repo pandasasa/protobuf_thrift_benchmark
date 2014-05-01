@@ -40,10 +40,8 @@ def init_data(data_dir, benchmark_dict):
 
             data_file_info_dict = benchmark_dict[tool][file_name]
             for data_key in basic_lib.se_data_key_list:
-                if data_key == 'input_file_path':
-                    data_file_info_dict[data_key] = data_dir + file_name
-                elif data_key == 'input_data':
-                    data = open(data_file_info_dict['input_file_path'], 'r')
+                if data_key == 'input_data':
+                    data = open(data_dir + file_name, 'r')
                     json_str = data.read()
                     data.close()
 
@@ -72,13 +70,12 @@ def test_go(data_dict):
             ins = address_book.AddressBook(tool, data_info)
             ins.serialization()
 
-            output_path = './output/python/' + tool + '/' \
-                    + file_name[:-5] + '.serialized'
+            output_path = './output/python/%s/%s.serialized' \
+                    % (tool, file_name[:-5])
             output_file = open(output_path, 'w')
             output_file.write(data_info['seed_file_str'])
             output_file.close()
 
-            data_info['seed_file_path'] = output_path
             data_info['seed_file_size'] = len(data_info['seed_file_str'])
 
             ins.deserialization()

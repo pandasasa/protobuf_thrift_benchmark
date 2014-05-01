@@ -14,9 +14,8 @@ input_data_dir = './data/'
 se_tool_list = ['protobuf', 'json', 'thrift_compact', 'thrift_binary']
 
 # A list of serialization related keys of dictionary.
-se_data_key_list = ['input_file_path', 'input_data', 'se_time', \
-                    'seed_file_str', 'seed_file_path', 'seed_file_size', \
-                    'dese_time']
+se_data_key_list = ['input_data', 'se_time', \
+                    'seed_file_str', 'seed_file_size', 'dese_time']
 
 # The dictionary's pickle file path.
 result_file_path = './result/python/original_dict.pickle'

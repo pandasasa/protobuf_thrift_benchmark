@@ -13,6 +13,8 @@ class Analyser(object):
     _output_path = None
     _x = None
     _y = None
+    _x_step = None
+    _y_step = None
 
     _key_list = ['se_time', 'dese_time', 'seed_file_size']
 
@@ -23,15 +25,38 @@ class Analyser(object):
         pickle_file.close()
 
         config_file = open(config_file_path, 'r')
-        for line in config_file:
-            if line[2:6] == 'loop':
-                if line[0] == 'x':
-                    self._x = int(line[7:])
-                elif line[0] == 'y':
-                    self._y = int(line[7:])
+        config_dict = self._parse_config(config_file)
+
+        self._x = config_dict['x_loop']
+        self._y = config_dict['y_loop']
+        self._x_step = config_dict['x_step']
+        self._y_step = config_dict['x_step']
+
+        config_file.close()
 
         self._output_path = output_path
-        config_file.close()
+
+
+    def _parse_config(self, file_obj):
+        '''
+        Parsing the config file.
+        '''
+
+        comment_sign = '#'
+        result = dict()
+
+        for line in file_obj:
+            # Ignore blank line and comments
+            if len(re.findall(r'\S', line)) == 0 \
+                or len(re.findall(r'^\s*%s.*$' % comment_sign, line)):
+                continue
+            if comment_sign in line:
+                line = line[:line.index(comment_sign)]
+
+            key_value = line.split('=')
+            result[key_value[0]] = int(key_value[1])
+
+        return result
 
 
     def default_write(self):
