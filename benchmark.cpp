@@ -63,10 +63,7 @@ void init_data(const string &data_dir, Benchmark::BenchmarkDict &benchmark_dict)
                 Benchmark::KeyLevel &key_dict
                     = file_dict[filename_iter->substr(7)];
 
-                if (*key_iter == "input_file_path")
-                    key_dict[*key_iter]
-                        = data_dir + filename_iter->substr(7);
-                else if (*key_iter == "input_data")
+                if (*key_iter == "input_data")
                 {
                     ifstream fin(filename_iter->c_str());
                     istreambuf_iterator<char> beg(fin), end;
@@ -114,11 +111,14 @@ void test_go(Benchmark::BenchmarkDict &data_dict)
             output_file << boost::any_cast<string>(data_info["seed_file_str"]);
             output_file.close();
 
-            data_info["seed_file_path"] = output_path;
-            data_info["seed_file_size"]
+            int size 
                 = boost::any_cast<string>(data_info["seed_file_str"]).length();
+            data_info["seed_file_size"] = size;
 
             ins.deserialization();
+
+            data_info.erase("input_data");
+            data_info.erase("seed_file_str");
         }
     }
 }
@@ -150,7 +150,7 @@ const Benchmark::SeToolLevel result_dict_output(const string &result_file_path,
             se_key_level["dese_time"]
                 = any_cast<long>(file_iter->second["dese_time"]);
             se_key_level["seed_file_size"]
-                = any_cast<string>(file_iter->second["seed_file_str"]).length();
+                = any_cast<int>(file_iter->second["seed_file_size"]);
 
             se_file_level[file_iter->first] = se_key_level;
         }

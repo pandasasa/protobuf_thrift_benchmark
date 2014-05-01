@@ -42,15 +42,15 @@ namespace Benchmark {
             this->result_file_path = "./result/cpp/original_dict.serialization";
             this->seed_file_path = "./output/";
 
-            std::string tool[] = {"protobuf", "json", "thrift_compact", "thrift_binary"};
-            std::string data_key[] = {"input_file_path", "input_data",
-                "se_time", "seed_file_str", "seed_file_path", "seed_file_size",
-                "dese_time"};
+            std::string tool[] = {"protobuf", "json", "thrift_compact",
+                "thrift_binary"};
+            std::string data_key[] = {"input_data", "se_time", "seed_file_str",
+                "seed_file_size", "dese_time"};
 
             this->se_tool_list
                 = std::list<std::string>(tool, tool + 4);
             this->se_data_key_list
-                = std::list<std::string>(data_key, data_key + 7);
+                = std::list<std::string>(data_key, data_key + 5);
         }
 
         const std::string &get_input_data_dir() const

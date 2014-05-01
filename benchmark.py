@@ -123,9 +123,8 @@ if __name__ == '__main__':
     print '  Outputing result to txt files.'
 
     pickle_file_path = './result/python/original_dict.pickle'
-    config_file_path = './gen.config'
     output_path = './result/python/'
 
-    ana = analyse.Analyser(pickle_file_path, config_file_path, output_path)
+    ana = analyse.Analyser(pickle_file_path, output_path)
     ana.default_write()
 
