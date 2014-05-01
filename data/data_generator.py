@@ -6,6 +6,8 @@ import os
 import json
 import random
 import copy
+import re
+
 
 class DataGenerator:
     '''
@@ -148,9 +150,17 @@ def parse_config(file_obj):
     Parsing the config file.
     '''
 
-    result = {}
+    comment_sign = '#'
+    result = dict()
 
     for line in file_obj:
+        # Ignore blank line and comments
+        if len(re.findall(r'\S', line)) == 0 \
+            or len(re.findall(r'^\s*%s.*$' % comment_sign, line)):
+            continue
+        if comment_sign in line:
+            line = line[:line.index(comment_sign)]
+
         key_value = line.split('=')
         result[key_value[0]] = int(key_value[1])
 

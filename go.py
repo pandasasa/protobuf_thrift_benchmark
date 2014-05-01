@@ -20,7 +20,6 @@ def data_generating(template_path, output_path, config_dict):
 
     print '  Generating'
     gen.gen()
-    del gen
 
 def print_title(title):
     split_line = '============================================================'
