@@ -53,7 +53,7 @@ class Analyser(object):
             x_list = list(x_set)
             y_list = list(y_set)
             x_list.sort()
-            x_list.sort()
+            y_list.sort()
 
             out_path = self._output_path + '/' + tool + '.' + key + '.result'
             write_file = open(out_path, 'w')

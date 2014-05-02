@@ -6,7 +6,7 @@
 
 #include <boost/serialization/string.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+#include <jsoncpp/json/json.h>
 
 #include <thrift/transport/TBufferTransports.h>
 #include <thrift/protocol/TCompactProtocol.h>
@@ -311,11 +311,11 @@ namespace Benchmark {
             namespace bp = boost::property_tree;
 
             timespec start_time, end_time;
-            bp::ptree se_dict;
+            Json::Value se_dict;
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
 
-            bp::ptree person_list;
+            Json::Value person_list;
             const boost::any &input_data = this->data_dic["input_data"];
             const bp::ptree &pt = boost::any_cast<bp::ptree>(input_data);
 
@@ -324,44 +324,43 @@ namespace Benchmark {
                 person != pt.get_child("person").end();
                 ++person)
             {
-                bp::ptree person_dict;
-                person_dict.put("name",
-                        person->second.get<std::string>("name"));
-                person_dict.put("id", person->second.get<int>("id"));
+                Json::Value person_dict;
+
+                person_dict["name"] = person->second.get<std::string>("name");
+                person_dict["id"] = person->second.get<int>("id");
 
                 if (person->second.get<std::string>("email") != "")
-                    person_dict.put("email",
-                            person->second.get<std::string>("email"));
+                    person_dict["email"]
+                        = person->second.get<std::string>("email");
 
-                bp::ptree phone_list;
+                Json::Value phone_list;
 
                 for (bp::ptree::const_iterator phone
                         = person->second.get_child("phone").begin();
                     phone != person->second.get_child("phone").end();
                     ++phone)
                 {
-                    bp::ptree phone_dict;
-                    phone_dict.put("number",
-                            phone->second.get<std::string>("number"));
-                    
-                    if (phone->second.get<std::string>("type") == "")
-                        phone_dict.put("type", "HOME");
-                    else
-                        phone_dict.put("type",
-                                phone->second.get<std::string>("type"));
+                    Json::Value phone_dict;
 
-                    phone_list.push_back(make_pair("", phone_dict));
+                    phone_dict["number"]
+                        = phone->second.get<std::string>("number");
+
+                    if (phone->second.get<std::string>("type") == "")
+                        phone_dict["type"] = "HOME";
+                    else
+                        phone_dict["type"]
+                            = phone->second.get<std::string>("type");
+
+                    phone_list.append(phone_dict);
                 }
 
-                person_dict.put_child("phone", phone_list);
-                person_list.push_back(make_pair("", person_dict));
+                person_dict["phone"] = phone_list;
+                person_list.append(person_dict);
             }
 
-            se_dict.put_child("person", person_list);
+            se_dict["person"] = person_list;
 
-            std::stringstream json_ss;
-            bp::json_parser::write_json(json_ss, se_dict);
-            std::string json_obj = json_ss.str();
+            std::string json_obj = se_dict.toStyledString();
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
@@ -373,18 +372,19 @@ namespace Benchmark {
 
         long de_json()
         {
-            namespace bp = boost::property_tree;
+            using namespace boost;
 
             timespec start_time, end_time;
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
-            
-            bp::ptree json_obj;
-            boost::any &str = this->data_dic["seed_file_str"];
-            std::stringstream json_ss(boost::any_cast<std::string>(str));
-            
-            bp::read_json(json_ss, json_obj);
-            
+
+            Json::Reader reader;
+            Json::Value root;
+            std::string json_str
+                = any_cast<std::string>(this->data_dic["seed_file_str"]);
+
+            reader.parse(json_str, root, false);
+
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
             return end_time.tv_nsec - start_time.tv_nsec;

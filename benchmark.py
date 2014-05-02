@@ -85,7 +85,7 @@ def result_dict_output(result_file_path, result_dict):
 
 if __name__ == '__main__':
     # Initializing information dictionary by data in path data_dir
-    print '  Init. & Run Benchmark'
+    print '  Running Benchmark'
     benchmark_dict = dict()
     test_go(basic_lib.input_data_dir, benchmark_dict)
 

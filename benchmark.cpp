@@ -73,8 +73,9 @@ void test_go(const string &data_dir, Benchmark::BenchmarkDict &benchmark_dict)
             Benchmark::AddressBook ins(*tool_iter, data_info);
             ins.serialization();
 
+            // Outputing serialized result
             string output_path = "./output/cpp/" + *tool_iter + "/"
-                + filename_iter->substr(0, filename_iter->length() - 5)
+                + filename_iter->substr(7)
                 + ".serialized";
 
             ofstream output_file(output_path.c_str());
@@ -147,7 +148,7 @@ int main(int argc, char *argv[])
     Benchmark::BasicData bd;
     
     // Initializing data and running benchmark
-    cout << "  Init. Data\n";
+    cout << "  Running Benchmark!\n";
     Benchmark::BenchmarkDict benchmark_dict;
     test_go(bd.get_input_data_dir(), benchmark_dict);
     

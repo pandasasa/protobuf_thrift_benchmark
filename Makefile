@@ -5,7 +5,7 @@ DEBUG =
 
 final_target = benchmark.exe
 link_lib = -lboost_system -lboost_filesystem -lboost_serialization \
-		   -lthrift -lprotobuf
+		   -ljsoncpp -lthrift -lprotobuf
 main_file = benchmark.cpp
 
 ap = address_book_protobuf.pb.o
