@@ -62,9 +62,9 @@ class AddressBook(basic_lib.Scenario):
                 else:
                     one_phone.type = address_book_protobuf_pb2.Person.OTHER
 
-        end_time = time.clock()
-
         self._data_dic['seed_file_str'] = address_book.SerializeToString()
+
+        end_time = time.clock()
 
         return end_time - start_time
 
@@ -127,9 +127,10 @@ class AddressBook(basic_lib.Scenario):
         
         address_book.write(bin_proto)
 
+        self._data_dic['seed_file_str'] = mem_buf.getvalue()
+
         end_time = time.clock()
 
-        self._data_dic['seed_file_str'] = mem_buf.getvalue()
 
         return end_time - start_time
 
@@ -196,9 +197,9 @@ class AddressBook(basic_lib.Scenario):
         
         address_book.write(bin_proto)
 
-        end_time = time.clock()
-
         self._data_dic['seed_file_str'] = mem_buf.getvalue()
+
+        end_time = time.clock()
 
         return end_time - start_time
 

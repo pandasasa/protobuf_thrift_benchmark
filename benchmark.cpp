@@ -5,8 +5,7 @@
 #include <vector>
 
 #include <boost/filesystem.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+#include <jsoncpp/json/json.h>
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/serialization/string.hpp>
@@ -21,7 +20,6 @@ using namespace std;
 void test_go(const string &data_dir, Benchmark::BenchmarkDict &benchmark_dict)
 {
     namespace bf = boost::filesystem;
-    namespace bp = boost::property_tree;
 
     Benchmark::BasicData bd;
     vector<string> data_file_list;
@@ -63,11 +61,11 @@ void test_go(const string &data_dir, Benchmark::BenchmarkDict &benchmark_dict)
             string json_str(begin, end);
             data_file.close();
 
-            stringstream ss(json_str);
-            bp::ptree pt;
-            bp::read_json(ss, pt);
+            Json::Reader reader;
+            Json::Value root;
+            reader.parse(json_str, root, false);
 
-            data_info["input_data"] = pt;
+            data_info["input_data"] = root;
 
             // Running Benchmark
             Benchmark::AddressBook ins(*tool_iter, data_info);
@@ -75,16 +73,16 @@ void test_go(const string &data_dir, Benchmark::BenchmarkDict &benchmark_dict)
 
             // Outputing serialized result
             string output_path = "./output/cpp/" + *tool_iter + "/"
-                + filename_iter->substr(7)
+                + filename_iter->substr(7, filename_iter->length() - 12)
                 + ".serialized";
 
             ofstream output_file(output_path.c_str());
-            output_file << boost::any_cast<string>(data_info["seed_file_str"]);
+            Json::FastWriter writer;
+            output_file << ins.get_seed_str();
             output_file.close();
 
-            int size 
-                = boost::any_cast<string>(data_info["seed_file_str"]).length();
-            data_info["seed_file_size"] = size;
+            int size = ins.get_seed_str().length();
+            data_info["seed_file_size"]["value"] = size;
 
             ins.deserialization();
 
@@ -119,11 +117,11 @@ const Benchmark::SeToolLevel result_dict_output(const string &result_file_path,
             SeKeyLevel se_key_level;
 
             se_key_level["se_time"]
-                = any_cast<long>(file_iter->second["se_time"]);
+                = file_iter->second["se_time"]["value"].asInt();
             se_key_level["dese_time"]
-                = any_cast<long>(file_iter->second["dese_time"]);
+                = file_iter->second["dese_time"]["value"].asInt();
             se_key_level["seed_file_size"]
-                = any_cast<int>(file_iter->second["seed_file_size"]);
+                = file_iter->second["seed_file_size"]["value"].asInt();
 
             se_file_level[file_iter->first] = se_key_level;
         }

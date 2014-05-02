@@ -1,11 +1,9 @@
 #ifndef ADDRESS_BOOK_HPP
 #define ADDRESS_BOOK_HPP
 
-#include <iostream>
 #include <ctime>
 
 #include <boost/serialization/string.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <jsoncpp/json/json.h>
 
 #include <thrift/transport/TBufferTransports.h>
@@ -25,63 +23,63 @@ namespace Benchmark {
             : Scenario(tool, data_info_dict), tool(tool),
             data_dic(data_info_dict) {}
 
+        const std::string &get_seed_str() const
+            { return this->local_seed_str; }
+
         long se_protobuf()
         {
             GOOGLE_PROTOBUF_VERIFY_VERSION;
-            namespace bp = boost::property_tree;
             namespace BPro = BenchmarkProtobuf;
 
             timespec start_time, end_time;
             BPro::AddressBook address_book;
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
 
-            const boost::any &input_data = this->data_dic["input_data"];
-            const bp::ptree &pt = boost::any_cast<bp::ptree>(input_data);
+            const Json::Value &input_data = this->data_dic["input_data"];
 
-            for (bp::ptree::const_iterator person
-                    = pt.get_child("person").begin();
-                person != pt.get_child("person").end();
-                ++person)
+            for (int person_index = 0;
+                person_index < input_data["person"].size();
+                person_index++)
             {
                 BPro::Person *one_person = address_book.add_person();
+                const Json::Value &person = input_data["person"][person_index];
 
-                one_person->set_name(person->second.get<std::string>("name"));
+                one_person->set_name(person["name"].asString());
                 
-                one_person->set_id(person->second.get<int>("id"));
+                one_person->set_id(person["id"].asInt());
                 
-                if (person->second.get<std::string>("email") == "")
-                    one_person->set_email(
-                            person->second.get<std::string>("email"));
+                if (person["email"].asString() != "")
+                    one_person->set_email(person["email"].asString());
                 
-                for (bp::ptree::const_iterator phone
-                        = person->second.get_child("phone").begin();
-                    phone != person->second.get_child("phone").end();
-                    ++phone)
+                for (int phone_index = 0;
+                    phone_index < person["phone"].size();
+                    phone_index++)
                 {
                     BPro::Person_PhoneNumber *one_phone
                         = one_person->add_phone();
+                    const Json::Value &phone = person["phone"][phone_index];
 
-                    one_phone->set_number(
-                            phone->second.get<std::string>("number"));
+                    one_phone->set_number(phone["number"].asString());
                     
-                    if (phone->second.get<std::string>("type") == "HOME"
-                        || phone->second.get<std::string>("type") == "")
+                    if (phone["type"].asString() == "HOME"
+                        || phone["type"].asString() == "")
                         one_phone->set_type(BPro::Person::HOME);
-                    else if (phone->second.get<std::string>("type")
-                            == "MOBILE")
+                    else if (phone["type"].asString() == "MOBILE")
                         one_phone->set_type(BPro::Person::MOBILE);
-                    else if (phone->second.get<std::string>("type") == "WORK")
+                    else if (phone["type"].asString() == "WORK")
                         one_phone->set_type(BPro::Person::WORK);
                     else
                         one_phone->set_type(BPro::Person::OTHER);
                 }
             }
+
+            address_book.SerializeToString(&(this->local_seed_str));
             
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
-            std::string seed_str;
-            address_book.SerializeToString(&seed_str);
-            this->data_dic["seed_file_str"] = seed_str;
+            this->data_dic["seed_file_size"] = Json::Value();
+            int size = this->local_seed_str.length();
+            this->data_dic["seed_file_size"]["value"] = size;
 
             return end_time.tv_nsec - start_time.tv_nsec;
         }
@@ -96,9 +94,7 @@ namespace Benchmark {
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
             
-            boost::any &str = this->data_dic["seed_file_str"];
-            
-            address_book.ParseFromString(boost::any_cast<std::string>(str));
+            address_book.ParseFromString(this->local_seed_str);
             
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
@@ -108,7 +104,6 @@ namespace Benchmark {
 
         long se_thrift_compact()
         {
-            namespace bp = boost::property_tree;
             namespace BThr = BenchmarkThrift;
             namespace atp = apache::thrift::protocol;
             namespace att = apache::thrift::transport;
@@ -121,40 +116,37 @@ namespace Benchmark {
             boost::shared_ptr<att::TMemoryBuffer>
                 mem_buf(new att::TMemoryBuffer);
             atp::TCompactProtocol bin_proto(mem_buf);
-            const boost::any &input_data = this->data_dic["input_data"];
-            const bp::ptree &pt = boost::any_cast<bp::ptree>(input_data);
+            const Json::Value &input_data = this->data_dic["input_data"];
 
-            for (bp::ptree::const_iterator person
-                    = pt.get_child("person").begin();
-                person != pt.get_child("person").end();
-                ++person)
+            for (int person_index = 0;
+                person_index < input_data["person"].size();
+                person_index++)
             {
                 BThr::Person one_person;
+                const Json::Value &person = input_data["person"][person_index];
 
-                one_person.__set_name(person->second.get<std::string>("name"));
+                one_person.__set_name(person["name"].asString());
                 
-                one_person.__set_id(person->second.get<int>("id"));
+                one_person.__set_id(person["id"].asInt());
                 
-                if (person->second.get<std::string>("email") == "")
-                    one_person.__set_email(
-                            person->second.get<std::string>("email"));
+                if (person["email"].asString() != "")
+                    one_person.__set_email(person["email"].asString());
                 
-                for (bp::ptree::const_iterator phone
-                        = person->second.get_child("phone").begin();
-                    phone != person->second.get_child("phone").end();
-                    ++phone)
+                for (int phone_index = 0;
+                    phone_index < person["phone"].size();
+                    phone_index++)
                 {
                     BThr::PhoneNumber one_phone;
+                    const Json::Value &phone = person["phone"][phone_index];
                     
-                    one_phone.__set_number(
-                            phone->second.get<std::string>("number"));
+                    one_phone.__set_number(phone["number"].asString());
                     
-                    if (phone->second.get<std::string>("type") == "HOME"
-                        || phone->second.get<std::string>("type") == "")
+                    if (phone["type"].asString() == "HOME"
+                        || phone["type"].asString() == "")
                         one_phone.__set_type(BThr::PhoneType::HOME);
-                    else if (phone->second.get<std::string>("type") == "MOBILE")
+                    else if (phone["type"].asString() == "MOBILE")
                         one_phone.__set_type(BThr::PhoneType::MOBILE);
-                    else if (phone->second.get<std::string>("type") == "WORK")
+                    else if (phone["type"].asString() == "WORK")
                         one_phone.__set_type(BThr::PhoneType::WORK);
                     else
                         one_phone.__set_type(BThr::PhoneType::OTHER);
@@ -168,9 +160,13 @@ namespace Benchmark {
             atp::TProtocol *bin_proto_ptr = &bin_proto;
             address_book.write(bin_proto_ptr);
 
+            this->local_seed_str = mem_buf->getBufferAsString();
+
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
-            this->data_dic["seed_file_str"] = mem_buf->getBufferAsString();
+            this->data_dic["seed_file_size"] = Json::Value();
+            int size = this->local_seed_str.length();
+            this->data_dic["seed_file_size"]["value"] = size;
 
             return end_time.tv_nsec - start_time.tv_nsec;
         }
@@ -186,8 +182,7 @@ namespace Benchmark {
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
             
-            boost::any &str = this->data_dic["seed_file_str"];
-            std::string std_str = boost::any_cast<std::string>(str);
+            const std::string &std_str = this->local_seed_str;
             uint8_t *buf = new uint8_t [std_str.length()];
             memcpy(buf, std_str.c_str(), std_str.length());
 
@@ -208,7 +203,6 @@ namespace Benchmark {
 
         long se_thrift_binary()
         {
-            namespace bp = boost::property_tree;
             namespace BThr = BenchmarkThrift;
             namespace atp = apache::thrift::protocol;
             namespace att = apache::thrift::transport;
@@ -221,40 +215,37 @@ namespace Benchmark {
             boost::shared_ptr<att::TMemoryBuffer>
                 mem_buf(new att::TMemoryBuffer);
             atp::TBinaryProtocol bin_proto(mem_buf);
-            const boost::any &input_data = this->data_dic["input_data"];
-            const bp::ptree &pt = boost::any_cast<bp::ptree>(input_data);
+            const Json::Value &input_data = this->data_dic["input_data"];
 
-            for (bp::ptree::const_iterator person
-                    = pt.get_child("person").begin();
-                person != pt.get_child("person").end();
-                ++person)
+            for (int person_index = 0;
+                person_index < input_data["person"].size();
+                person_index++)
             {
                 BThr::Person one_person;
+                const Json::Value &person = input_data["person"][person_index];
 
-                one_person.__set_name(person->second.get<std::string>("name"));
+                one_person.__set_name(person["name"].asString());
                 
-                one_person.__set_id(person->second.get<int>("id"));
+                one_person.__set_id(person["id"].asInt());
                 
-                if (person->second.get<std::string>("email") == "")
-                    one_person.__set_email(
-                            person->second.get<std::string>("email"));
+                if (person["email"].asString() != "")
+                    one_person.__set_email(person["email"].asString());
                 
-                for (bp::ptree::const_iterator phone
-                        = person->second.get_child("phone").begin();
-                    phone != person->second.get_child("phone").end();
-                    ++phone)
+                for (int phone_index = 0;
+                    phone_index < person["phone"].size();
+                    phone_index++)
                 {
                     BThr::PhoneNumber one_phone;
+                    const Json::Value &phone = person["phone"][phone_index];
                     
-                    one_phone.__set_number(
-                            phone->second.get<std::string>("number"));
+                    one_phone.__set_number(phone["number"].asString());
                     
-                    if (phone->second.get<std::string>("type") == "HOME"
-                        || phone->second.get<std::string>("type") == "")
+                    if (phone["type"].asString() == "HOME"
+                            || phone["type"].asString() == "")
                         one_phone.__set_type(BThr::PhoneType::HOME);
-                    else if (phone->second.get<std::string>("type") == "MOBILE")
+                    else if (phone["type"].asString() == "MOBILE")
                         one_phone.__set_type(BThr::PhoneType::MOBILE);
-                    else if (phone->second.get<std::string>("type") == "WORK")
+                    else if (phone["type"].asString() == "WORK")
                         one_phone.__set_type(BThr::PhoneType::WORK);
                     else
                         one_phone.__set_type(BThr::PhoneType::OTHER);
@@ -268,9 +259,13 @@ namespace Benchmark {
             atp::TProtocol *bin_proto_ptr = &bin_proto;
             address_book.write(bin_proto_ptr);
 
+            this->local_seed_str = mem_buf->getBufferAsString();
+
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
-            this->data_dic["seed_file_str"] = mem_buf->getBufferAsString();
+            this->data_dic["seed_file_size"] = Json::Value();
+            int size = this->local_seed_str.length();
+            this->data_dic["seed_file_size"]["value"] = size;
 
             return end_time.tv_nsec - start_time.tv_nsec;
         }
@@ -286,8 +281,7 @@ namespace Benchmark {
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
             
-            boost::any &str = this->data_dic["seed_file_str"];
-            std::string std_str = boost::any_cast<std::string>(str);
+            const std::string &std_str = this->local_seed_str;
             uint8_t *buf = new uint8_t [std_str.length()];
             memcpy(buf, std_str.c_str(), std_str.length());
 
@@ -308,48 +302,42 @@ namespace Benchmark {
 
         long se_json()
         {
-            namespace bp = boost::property_tree;
-
             timespec start_time, end_time;
             Json::Value se_dict;
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
 
             Json::Value person_list;
-            const boost::any &input_data = this->data_dic["input_data"];
-            const bp::ptree &pt = boost::any_cast<bp::ptree>(input_data);
+            const Json::Value &input_data = this->data_dic["input_data"];
 
-            for (bp::ptree::const_iterator person
-                    = pt.get_child("person").begin();
-                person != pt.get_child("person").end();
-                ++person)
+            for (int person_index = 0;
+                person_index < input_data["person"].size();
+                person_index++)
             {
                 Json::Value person_dict;
+                const Json::Value &person = input_data["person"][person_index];
 
-                person_dict["name"] = person->second.get<std::string>("name");
-                person_dict["id"] = person->second.get<int>("id");
+                person_dict["name"] = person["name"].asString();
+                person_dict["id"] = person["id"].asInt();
 
-                if (person->second.get<std::string>("email") != "")
-                    person_dict["email"]
-                        = person->second.get<std::string>("email");
+                if (person["email"].asString() != "")
+                    person_dict["email"] = person["email"].asString();
 
                 Json::Value phone_list;
 
-                for (bp::ptree::const_iterator phone
-                        = person->second.get_child("phone").begin();
-                    phone != person->second.get_child("phone").end();
-                    ++phone)
+                for (int phone_index = 0;
+                    phone_index < person["phone"].size();
+                    phone_index++)
                 {
                     Json::Value phone_dict;
+                    const Json::Value &phone = person["phone"][phone_index];
 
-                    phone_dict["number"]
-                        = phone->second.get<std::string>("number");
+                    phone_dict["number"] = phone["number"].asString();
 
-                    if (phone->second.get<std::string>("type") == "")
+                    if (phone["type"].asString() == "")
                         phone_dict["type"] = "HOME";
                     else
-                        phone_dict["type"]
-                            = phone->second.get<std::string>("type");
+                        phone_dict["type"] = phone["type"].asString();
 
                     phone_list.append(phone_dict);
                 }
@@ -360,11 +348,14 @@ namespace Benchmark {
 
             se_dict["person"] = person_list;
 
-            std::string json_obj = se_dict.toStyledString();
+            Json::FastWriter writer;
+            std::string json_obj = this->writer.write(se_dict);
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
-            this->data_dic["seed_file_str"] = json_obj;
+            this->data_dic["seed_file_str"] = Json::Value();
+            this->data_dic["seed_file_str"]["value"] = json_obj;
+            this->local_seed_str = json_obj;
 
             return end_time.tv_nsec - start_time.tv_nsec;
         }
@@ -372,16 +363,14 @@ namespace Benchmark {
 
         long de_json()
         {
-            using namespace boost;
-
             timespec start_time, end_time;
 
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
 
             Json::Reader reader;
             Json::Value root;
-            std::string json_str
-                = any_cast<std::string>(this->data_dic["seed_file_str"]);
+            const std::string &json_str
+                = this->data_dic["seed_file_str"]["value"].asString();
 
             reader.parse(json_str, root, false);
 
@@ -394,6 +383,9 @@ namespace Benchmark {
     private:
         std::string tool;
         KeyLevel &data_dic;
+        std::string local_seed_str;
+
+        Json::FastWriter writer;
     };
 }
 

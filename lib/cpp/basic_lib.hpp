@@ -1,19 +1,19 @@
 #ifndef BASIC_LIB_HPP
 #define BASIC_LIB_HPP
 
-#include <boost/any.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/string.hpp>
+#include <jsoncpp/json/json.h>
 
 namespace Benchmark {
 
-    typedef std::map<std::string, boost::any> KeyLevel;
+    typedef std::map<std::string, Json::Value> KeyLevel;
     typedef std::map<std::string, KeyLevel> FileLevel;
     typedef std::map<std::string, FileLevel> ToolLevel;
     typedef ToolLevel BenchmarkDict;
     
-    typedef std::map<std::string, long> SeKeyLevel;
+    typedef std::map<std::string, int> SeKeyLevel;
     typedef std::map<std::string, SeKeyLevel> SeFileLevel;
     typedef std::map<std::string, SeFileLevel> SeToolLevel;
 
@@ -103,7 +103,8 @@ namespace Benchmark {
                     continue;
             }
 
-            this->data_dic["se_time"] = final_time;
+            this->data_dic["se_time"] = Json::Value();
+            this->data_dic["se_time"]["value"] = static_cast<int>(final_time);
         }
 
         void deserialization()
@@ -129,7 +130,9 @@ namespace Benchmark {
                     continue;
             }
 
-            this->data_dic["dese_time"] = final_time;
+            this->data_dic["dese_time"] = Json::Value();
+            this->data_dic["dese_time"]["value"]
+                = static_cast<int>(final_time);
         }
 
         virtual long se_protobuf() = 0;
