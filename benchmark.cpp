@@ -18,7 +18,7 @@
 using namespace std;
 
 
-void init_data(const string &data_dir, Benchmark::BenchmarkDict &benchmark_dict)
+void test_go(const string &data_dir, Benchmark::BenchmarkDict &benchmark_dict)
 {
     namespace bf = boost::filesystem;
     namespace bp = boost::property_tree;
@@ -52,59 +52,29 @@ void init_data(const string &data_dir, Benchmark::BenchmarkDict &benchmark_dict)
             filename_iter != data_file_list.end();
             ++filename_iter)
         {
+            // Initializating the data
             Benchmark::FileLevel &file_dict = benchmark_dict[*tool_iter];
             file_dict[filename_iter->substr(7)] = Benchmark::KeyLevel();
+            Benchmark::KeyLevel &data_info
+                = file_dict[filename_iter->substr(7)];
 
-            for (list<string>::const_iterator key_iter
-                    = bd.get_key_list().begin();
-                key_iter != bd.get_key_list().end();
-                ++key_iter)
-            {
-                Benchmark::KeyLevel &key_dict
-                    = file_dict[filename_iter->substr(7)];
+            ifstream data_file(filename_iter->c_str());
+            istreambuf_iterator<char> begin(data_file), end;
+            string json_str(begin, end);
+            data_file.close();
 
-                if (*key_iter == "input_data")
-                {
-                    ifstream fin(filename_iter->c_str());
-                    istreambuf_iterator<char> beg(fin), end;
-                    string json_str(beg, end);
-                    fin.close();
+            stringstream ss(json_str);
+            bp::ptree pt;
+            bp::read_json(ss, pt);
 
-                    stringstream ss(json_str);
-                    bp::ptree pt;
-                    bp::read_json(ss, pt);
+            data_info["input_data"] = pt;
 
-                    key_dict[*key_iter] = pt;
-                }
-                else
-                    key_dict[*key_iter] = NULL;
-            }
-        }
-    }
-}
-
-
-void test_go(Benchmark::BenchmarkDict &data_dict)
-{
-    for (Benchmark::BenchmarkDict::iterator tool_iter = data_dict.begin();
-        tool_iter != data_dict.end();
-        ++tool_iter)
-    {
-        cout << "    Tool: " << tool_iter->first << endl;
-
-        Benchmark::FileLevel &file_level = data_dict[tool_iter->first];
-
-        for (Benchmark::FileLevel::iterator file_iter = file_level.begin();
-            file_iter != file_level.end();
-            ++file_iter)
-        {
-            Benchmark::KeyLevel &data_info = file_level[file_iter->first];
-
-            Benchmark::AddressBook ins(tool_iter->first, data_info);
+            // Running Benchmark
+            Benchmark::AddressBook ins(*tool_iter, data_info);
             ins.serialization();
 
-            string output_path = "./output/cpp/" + tool_iter->first + "/"
-                + file_iter->first.substr(0, file_iter->first.length() - 5)
+            string output_path = "./output/cpp/" + *tool_iter + "/"
+                + filename_iter->substr(0, filename_iter->length() - 5)
                 + ".serialized";
 
             ofstream output_file(output_path.c_str());
@@ -117,6 +87,8 @@ void test_go(Benchmark::BenchmarkDict &data_dict)
 
             ins.deserialization();
 
+            // Clear the original string and serialized string
+            // for reducing the size of boost::serialization file
             data_info.erase("input_data");
             data_info.erase("seed_file_str");
         }
@@ -174,14 +146,10 @@ int main(int argc, char *argv[])
 {
     Benchmark::BasicData bd;
     
-    // Initializing information dictionary by data in path data_dir
+    // Initializing data and running benchmark
     cout << "  Init. Data\n";
     Benchmark::BenchmarkDict benchmark_dict;
-    init_data(bd.get_input_data_dir(), benchmark_dict);
-    
-    // Running Benchmark
-    cout << "  Running Benchmark\n";
-    test_go(benchmark_dict);
+    test_go(bd.get_input_data_dir(), benchmark_dict);
     
     // Processing the result and generating statistic results
     cout << "  Saving Result to boost::serialization.\n";

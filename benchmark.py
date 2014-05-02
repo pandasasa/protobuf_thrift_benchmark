@@ -12,10 +12,11 @@ from lib.python import *
 from result.python import analyse
 
 
-def init_data(data_dir, benchmark_dict):
+def test_go(data_dir, benchmark_dict):
     '''
-    Initialization Data
+    Initializing and running data
     Load testing data from data_dir, filling them into global dictionary.
+    Then run the benchmark.
     
     Arguments:
     data_dir: Direction of testing data.
@@ -38,34 +39,11 @@ def init_data(data_dir, benchmark_dict):
         for file_name in file_list:
             benchmark_dict[tool][file_name] = dict()
 
-            data_file_info_dict = benchmark_dict[tool][file_name]
-            for data_key in basic_lib.se_data_key_list:
-                if data_key == 'input_data':
-                    data = open(data_dir + file_name, 'r')
-                    json_str = data.read()
-                    data.close()
+            data_info = benchmark_dict[tool][file_name]
 
-                    data_file_info_dict[data_key] = json.loads(json_str)
-                else:
-                    data_file_info_dict[data_key] = None
-
-
-def test_go(data_dict):
-    '''
-    Running Test
-    Begin to run the test.
-
-    Arguments:
-    data_dict: The initialized dictionary.
-
-    Return value:
-    None
-    '''
-
-    for tool in data_dict.keys():
-        print '    Tool: ' + tool
-        for file_name in data_dict[tool].keys():
-            data_info = data_dict[tool][file_name]
+            data_file = open(data_dir + file_name, 'r')
+            data_info['input_data'] = json.load(data_file)
+            data_file.close()
 
             ins = address_book.AddressBook(tool, data_info)
             ins.serialization()
@@ -107,13 +85,9 @@ def result_dict_output(result_file_path, result_dict):
 
 if __name__ == '__main__':
     # Initializing information dictionary by data in path data_dir
-    print '  Init. Data'
+    print '  Init. & Run Benchmark'
     benchmark_dict = dict()
-    init_data(basic_lib.input_data_dir, benchmark_dict)
-
-    # Running Benchmark
-    print '  Running Benchmark'
-    test_go(benchmark_dict)
+    test_go(basic_lib.input_data_dir, benchmark_dict)
 
     # Processing the result and generating statistic results
     print '  Saving Result to Pickle.'

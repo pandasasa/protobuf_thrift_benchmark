@@ -383,7 +383,7 @@ namespace Benchmark {
             boost::any &str = this->data_dic["seed_file_str"];
             std::stringstream json_ss(boost::any_cast<std::string>(str));
             
-            bp::json_parser::read_json(json_ss, json_obj);
+            bp::read_json(json_ss, json_obj);
             
             clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);
 
