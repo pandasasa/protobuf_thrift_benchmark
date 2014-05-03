@@ -4,7 +4,6 @@
 import os
 
 import json
-import random
 import copy
 import re
 
@@ -17,6 +16,9 @@ class DataGenerator:
     _temp_dict = None
     _output_path = None
     _ignore_key_list = None
+
+    _step_empty_dict = None
+    _step_str = None
 
     _x_loop = 10
     _y_loop = 1
@@ -47,6 +49,17 @@ class DataGenerator:
             print 'ERROR! STEP IS LARGER THAN LOOP NUM.'
             exit(1)
 
+        self._step_empty_dict = list(self._step_ext(dict(), self._y_step))
+        self._step_str = ''.join(self._step_ext('g', self._x_step))
+
+
+    def _step_ext(self, item, step):
+        '''
+        Extend follow step length
+        '''
+        for i in xrange(step):
+            yield copy.deepcopy(item)
+
 
     def _x_ext(self, dic):
         '''
@@ -60,7 +73,7 @@ class DataGenerator:
             value_type = type(dic[key])
                 
             if value_type is unicode:
-                dic[key] += 'g'
+                dic[key] += self._step_str
             elif value_type is list:
                 for item in dic[key]:
                     self._x_ext(item)
@@ -86,9 +99,9 @@ class DataGenerator:
                 for item in dic[key]:
                     self._y_ext(item)
                 if item is None:
-                    dic[key].append(dict())
+                    dic[key] += self._step_empty_dict
                 else:
-                    dic[key].append(item)
+                    dic[key] += list(self._step_ext(item, self._y_step))
             elif value_type is dict:
                 self._x_ext(dic[key])
             else:

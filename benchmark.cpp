@@ -44,6 +44,7 @@ void test_go(const string &data_dir, Benchmark::BenchmarkDict &benchmark_dict)
         tool_iter != bd.get_tool_list().end();
         ++tool_iter)
     {
+        cout << "    " << *tool_iter << endl;
         benchmark_dict[*tool_iter] = Benchmark::FileLevel();
 
         for (vector<string>::iterator filename_iter = data_file_list.begin();

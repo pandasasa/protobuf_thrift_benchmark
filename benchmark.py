@@ -36,6 +36,8 @@ def test_go(data_dir, benchmark_dict):
 
     for tool in basic_lib.se_tool_list:
         benchmark_dict[tool] = dict()
+
+        print '    %s' % tool
         for file_name in file_list:
             benchmark_dict[tool][file_name] = dict()
 

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import time
-import copy
 import json
 
 # This file is used to set some global vaiables such as the dictionary keys.
