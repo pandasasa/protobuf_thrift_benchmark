@@ -6,6 +6,7 @@ import os
 import json
 import copy
 import re
+import random
 
 
 class DataGenerator:
@@ -57,8 +58,13 @@ class DataGenerator:
         '''
         Extend follow step length
         '''
-        for i in xrange(step):
-            yield copy.deepcopy(item)
+        
+        if item is dict:
+            for i in xrange(step):
+                yield copy.deepcopy(item)
+        else:
+            for i in xrange(step):
+                yield copy.deepcopy('%c' % random.randint(97, 122))
 
 
     def _x_ext(self, dic):
